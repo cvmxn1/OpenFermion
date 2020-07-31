@@ -20,3 +20,5 @@ from .quadratic_hamiltonian import (
     QuadraticHamiltonian,
     QuadraticHamiltonianError,
 )
+
+from .doci_hamiltonian import DOCIHamiltonian
