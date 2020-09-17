@@ -234,6 +234,7 @@ from openfermion.ops import (
     InteractionRDMError,
     QuadraticHamiltonian,
     QuadraticHamiltonianError,
+    DOCIHamiltonian,
 )
 
 from openfermion.testing import (
