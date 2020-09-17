@@ -10,7 +10,7 @@ from .interaction_operator import (
     InteractionOperator,
     InteractionOperatorError,
     get_tensor_from_integrals,
-    get_active_space_integrals
+    get_active_space_integrals,
 )
 
 from .interaction_rdm import (
