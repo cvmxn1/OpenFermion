@@ -9,6 +9,8 @@ from .diagonal_coulomb_hamiltonian import DiagonalCoulombHamiltonian
 from .interaction_operator import (
     InteractionOperator,
     InteractionOperatorError,
+    get_tensors_from_integrals,
+    get_active_space_integrals,
 )
 
 from .interaction_rdm import (
@@ -20,3 +22,4 @@ from .quadratic_hamiltonian import (
     QuadraticHamiltonian,
     QuadraticHamiltonianError,
 )
+from .doci_hamiltonian import DOCIHamiltonian

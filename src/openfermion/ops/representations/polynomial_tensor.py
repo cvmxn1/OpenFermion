@@ -20,6 +20,8 @@ import numpy
 
 from openfermion.config import EQ_TOLERANCE
 
+COEFFICIENT_TYPES = (int, float, complex)
+
 
 class PolynomialTensorError(Exception):
     pass
@@ -125,17 +127,21 @@ class PolynomialTensor(object):
         """Initialize the PolynomialTensor class.
 
         Args:
-            n_body_tensors(dict): A dictionary storing the tensors describing
-                n-body interactions.
+            n_body_tensors(dict or None): A dictionary storing the tensors
+                describing n-body interactions. If None, n_body_tensors are
+                assumed to be generated on-the-fly by other data (for
+                subclassing purposes).
         """
-        self.n_body_tensors = n_body_tensors
-
-        # Set n_qubits
-        key_iterator = iter(n_body_tensors.keys())
-        key = next(key_iterator)
-        if key == ():
+        self._n_body_tensors = n_body_tensors
+        if n_body_tensors is None:
+            self._n_qubits = None
+        else:
+            # Set n_qubits
+            key_iterator = iter(n_body_tensors.keys())
             key = next(key_iterator)
-        self.n_qubits = n_body_tensors[key].shape[0]
+            if key == ():
+                key = next(key_iterator)
+            self._n_qubits = n_body_tensors[key].shape[0]
 
     @property
     def constant(self):
@@ -146,6 +152,18 @@ class PolynomialTensor(object):
     def constant(self, value):
         """Set the value of the constant term."""
         self.n_body_tensors[()] = value
+
+    @property
+    def n_body_tensors(self):
+        return self._n_body_tensors
+
+    @n_body_tensors.setter
+    def n_body_tensors(self, value):
+        self._n_body_tensors = value
+
+    @property
+    def n_qubits(self):
+        return self._n_qubits
 
     def __getitem__(self, args):
         """Look up matrix element.
@@ -203,6 +221,11 @@ class PolynomialTensor(object):
         return not (self == other)
 
     def __iadd__(self, addend):
+
+        if isinstance(addend, COEFFICIENT_TYPES):
+            self.constant += addend
+            return self
+
         if not issubclass(type(addend), PolynomialTensor):
             raise TypeError('Invalid type.')
 
@@ -223,6 +246,9 @@ class PolynomialTensor(object):
         summand += addend
         return summand
 
+    def __radd__(self, addend):
+        return self + addend
+
     def with_function_applied_elementwise(self, func):
         new_n_body_tensors = dict()
         for key in self.n_body_tensors:
@@ -236,6 +262,11 @@ class PolynomialTensor(object):
         return self.with_function_applied_elementwise(lambda x: x % other)
 
     def __isub__(self, subtrahend):
+
+        if isinstance(subtrahend, COEFFICIENT_TYPES):
+            self.constant -= subtrahend
+            return self
+
         if not issubclass(type(subtrahend), PolynomialTensor):
             raise TypeError('Invalid type.')
 
@@ -255,6 +286,9 @@ class PolynomialTensor(object):
         r = copy.deepcopy(self)
         r -= subtrahend
         return r
+
+    def __rsub__(self, subtrahend):
+        return -1 * self + subtrahend
 
     def __imul__(self, multiplier):
         if isinstance(multiplier, (int, float, complex)):
