@@ -21,6 +21,7 @@ from .interaction_rdm import (
 from .quadratic_hamiltonian import (
     QuadraticHamiltonian,
     QuadraticHamiltonianError,
+    antisymmetric_canonical_form,
 )
 
 from .doci_hamiltonian import DOCIHamiltonian
