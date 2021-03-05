@@ -38,3 +38,10 @@ def test_richardson_gaudin_hamiltonian(g, n_qubits, expected):
     assert numpy.array_equal(
         numpy.sort(numpy.unique(get_sparse_operator(rg_qubit).diagonal())),
         numpy.array(list(range((n_qubits + 1) * n_qubits // 2 + 1))))
+
+def test_n_body_tensor_errors():
+    rg = RichardsonGaudin(1.7, n_qubits=2)
+    with pytest.raises(TypeError):
+        rg.n_body_tensors = 0
+    with pytest.raises(TypeError):
+        rg.constant = 1.1
