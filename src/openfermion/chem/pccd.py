@@ -11,7 +11,10 @@ import openfermion as of
 
 class pCCD:
 
-    def __init__(self, molecule, iter_max=100, e_convergence=1.0E-6,
+    def __init__(self,
+                 molecule,
+                 iter_max=100,
+                 e_convergence=1.0E-6,
                  r_convergence=1.0E-6):
         self.molecule = molecule
         self.o = molecule.n_electrons // 2
@@ -36,27 +39,22 @@ class pCCD:
         self.f_o = np.zeros(o)
         self.f_v = np.zeros(v)
 
-        # print("v_(ii|aa)")
         for i in range(o):
             for a in range(v):
                 self.v_iiaa[i * v + a] = tei[i, a + o, a + o, i]
 
-        # print("v_(ia|ia)")
         for i in range(o):
             for a in range(v):
                 self.v_iaia[i * v + a] = tei[i, i, a + o, a + o]
 
-        # print("v_(ij|ij)")
         for i in range(o):
             for j in range(o):
                 self.v_ijij[i * o + j] = tei[i, i, j, j]
 
-        # print("v_(ab|ab)")
         for a in range(v):
             for b in range(v):
-                self.v_abab[a * v + b] = tei[a + o,  a + o, b + o, b + o]
+                self.v_abab[a * v + b] = tei[a + o, a + o, b + o, b + o]
 
-        # print("fock (o)")
         for i in range(o):
             dum = oei[i, i]
             for k in range(o):
@@ -64,9 +62,8 @@ class pCCD:
                 dum -= tei[i, k, i, k]
             self.f_o[i] = dum
 
-        # print("fock (v)")
         for a in range(v):
-            dum = oei[a + o,  a + o]
+            dum = oei[a + o, a + o]
             for k in range(o):
                 dum += 2 * tei[a + o, k, k, a + o]
                 dum -= tei[a + o, k, a + o, k]
@@ -92,7 +89,8 @@ class pCCD:
             # update amplitudes
             for i in range(o):
                 for a in range(v):
-                    self.residual[i * v + a] *= -0.5 / (self.f_v[a] - self.f_o[i])
+                    self.residual[i * v +
+                                  a] *= -0.5 / (self.f_v[a] - self.f_o[i])
 
             self.t0 = self.residual.copy()
             self.t0 = self.t0 + -self.t2
@@ -103,7 +101,8 @@ class pCCD:
             dE = en
             en = self.evaluate_projected_energy()
             dE -= en
-            print("\t\t\t{}\t{: 5.10f}\t{: 5.10f}\t{: 5.10f}".format(iter, en, dE, nrm))
+            print("\t\t\t{}\t{: 5.10f}\t{: 5.10f}\t{: 5.10f}".format(
+                iter, en, dE, nrm))
 
             if np.abs(dE) < self.e_convergence and nrm < self.r_convergence:
                 break
@@ -146,17 +145,20 @@ class pCCD:
         # print("VxT_o ")
         for i in range(o):
             # contract over the virtual index of the vectorized matrix
-            VxT_o[i] = -2.0 * np.dot(self.v_iaia[i * v:(i + 1) * v], self.t2[i * v: (i + 1)* v ])
+            VxT_o[i] = -2.0 * np.dot(self.v_iaia[i * v:(i + 1) * v],
+                                     self.t2[i * v: (i + 1)* v ])
 
         # print("VxT_oo(i,j) = (jb|jb) t(i,b)")
         for i, j in product(range(o), repeat=2):
-            VxT_oo[i * o + j] = np.dot(self.v_iaia[j*v:(j + 1)*v], self.t2[i*v:(i + 1)*v])
+            VxT_oo[i * o + j] = np.dot(self.v_iaia[j*v:(j + 1)*v],
+                                       self.t2[i*v:(i + 1)*v])
 
         # // r2(i,a) += t(j,a) VxT_oo(i,j)
         for i in range(o):
             for a in range(v):
                 # sum over j index
-                self.residual[i * v + a] += np.dot(self.t2[a::v], VxT_oo[i * o:(i + 1) * o])
+                self.residual[i * v + a] += np.dot(self.t2[a::v],
+                                                   VxT_oo[i * o:(i + 1) * o])
 
         # print("VxT_v and o contraction")
         for i in range(o):
@@ -177,7 +179,9 @@ class pCCD:
         sigma = self.v_iaia.copy()
         for i in range(o):
             for a in range(v):
-                sigma[i * v + a] -= 2 * (2 * self.v_iiaa[i * v + a] - self.v_iaia[i * v + a]) * self.t2[i * v + a]
+                sigma[i * v +
+                      a] -= 2 * (2 * self.v_iiaa[i * v + a] -
+                                 self.v_iaia[i * v + a]) * self.t2[i * v + a]
 
         for i in range(o):
             for a in range(v):

@@ -31,7 +31,7 @@ class RichardsonGaudin(DOCIHamiltonian):
 
     .. math::
 
-        H = \sum_{p=0} (p+1) N_p + g/2 \sum_{p < q} P_p^\dagger P_q,
+        H = \sum_{p=0} (p + 1) N_p + g/2 \sum_{p < q} P_p^\dagger P_q,
 
     where
 
@@ -58,7 +58,7 @@ class RichardsonGaudin(DOCIHamiltonian):
         hr1 = numpy.zeros((n_qubits, n_qubits))
         hr2 = numpy.zeros((n_qubits, n_qubits))
         for p in range(n_qubits):
-            hc[p] = p+1
+            hc[p] = p + 1
             for q in range(n_qubits):
                 if p != q:
                     hr1[p, q] = g
@@ -66,12 +66,14 @@ class RichardsonGaudin(DOCIHamiltonian):
 
     @DOCIHamiltonian.constant.setter
     def constant(self, value):
-        raise TypeError('Raw edits of the constant of a RichardsonGaudin model'
-                        'is not allowed. Either adjust the g paramter '
-                        'or cast to another PolynomialTensor class.')
+        raise TypeError(
+            'Raw edits of the constant of a RichardsonGaudin model'
+            'is not allowed. Either adjust the g paramter '
+            'or cast to another PolynomialTensor class.')
 
     @DOCIHamiltonian.n_body_tensors.setter
     def n_body_tensors(self, value):
-        raise TypeError('Raw edits of the n_body_tensors of a RichardsonGaudin model'
-                        'is not allowed. Either adjust the g paramter '
-                        'or cast to another PolynomialTensor class.')
+        raise TypeError(
+            'Raw edits of the n_body_tensors of a RichardsonGaudin model'
+            'is not allowed. Either adjust the g paramter '
+            'or cast to another PolynomialTensor class.')
