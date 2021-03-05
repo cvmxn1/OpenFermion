@@ -12,9 +12,16 @@
 """Tests for Richardson Gaudin model module."""
 
 import pytest
+import numpy
 
 from openfermion.hamiltonians import RichardsonGaudin
 from openfermion.ops import QubitOperator
+from openfermion.transforms import get_fermion_operator
+from openfermion.transforms import jordan_wigner
+from openfermion.linalg import get_sparse_operator
+
+#from openfermion.ops.representations.doci_hamiltonian import get_doci_from_integrals
+
 
 @pytest.mark.parametrize(
     'g, n_qubits, expected',
@@ -25,5 +32,8 @@ from openfermion.ops import QubitOperator
 )
 def test_richardson_gaudin_hamiltonian(
         g, n_qubits, expected):
-    op = RichardsonGaudin(g, n_qubits)
-    assert op.hamiltonian == expected
+    rg = RichardsonGaudin(g, n_qubits)
+    rg_qubit = rg.qubit_operator
+    assert rg_qubit == expected
+
+    assert numpy.array_equal(numpy.sort(numpy.unique(get_sparse_operator(rg_qubit).diagonal())), numpy.array(list(range((n_qubits+1)*n_qubits//2+1))))

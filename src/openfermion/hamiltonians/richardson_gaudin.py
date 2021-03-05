@@ -11,12 +11,14 @@
 #   limitations under the License.
 """This module constructs Hamiltonians of the Richardson Gaudin type.
 """
+import numpy
 
 from openfermion.ops import QubitOperator
-from openfermion.ops.representations import PolynomialTensor
+from openfermion.ops.representations import (PolynomialTensor,
+                                             get_tensors_from_integrals)
+from openfermion.ops.representations import DOCIHamiltonian
 
-
-class RichardsonGaudin:
+class RichardsonGaudin(DOCIHamiltonian):
     r"""Richardson Gaudin model.
 
     Class for storing and constructing Richardson Gaudin hamiltonians
@@ -40,6 +42,10 @@ class RichardsonGaudin:
         P_p &= a_{p,\beta} a_{p,\alpha} = S^{-} = \sigma^X - i \sigma^Y, \\
         g &= constant coupling term
         \end{align}
+
+    Note;
+        The digonal of the Hamiltonian is composed of the values in
+        range((n_qubits+1)*n_qubits//2+1).
     """
     def __init__(self, g, n_qubits):
         r"""Richardson Gaudin model on a given number of qubits.
@@ -48,76 +54,24 @@ class RichardsonGaudin:
             g (float): Coupling strength
             n_qubits (int): Number of qubits
         """
-        self._g = g
-        self._n_qubits = n_qubits
+        hc = numpy.zeros((n_qubits,))
+        hr1 = numpy.zeros((n_qubits, n_qubits))
+        hr2 = numpy.zeros((n_qubits, n_qubits))
+        for p in range(n_qubits):
+            hc[p] = p+1
+            for q in range(n_qubits):
+                if p != q:
+                    hr1[p, q] = g
+        super().__init__(0.0, hc, hr1, hr2)
 
-    @property
-    def hamiltonian(self):
-        """QubitOperator representation of the Hamiltonian.
-        """
-        return self.identity_part + self.z_part + self.xx_and_yy_part
+    @DOCIHamiltonian.constant.setter
+    def constant(self, value):
+        raise TypeError('Raw edits of the constant of a RichardsonGaudin model'
+                        'is not allowed. Either adjust the g paramter '
+                        'or cast to another PolynomialTensor class.')
 
-    @property
-    def identity_part(self):
-        """Identity part of the QubitOperator representation of the Hamiltonian.
-        """
-        return QubitOperator((), (self._n_qubits+1)*self._n_qubits// 2 / 2)
-
-    @property
-    def xx_part(self):
-        """XX part of the QubitOperator representation of the Hamiltonian.
-        """
-        return sum([
-            QubitOperator("X" + str(p) + " X" + str(q), self._g / 2)
-            for p in range(self.n_qubits)
-            for q in range(p + 1, self.n_qubits)
-        ])
-
-    @property
-    def yy_part(self):
-        """YY part of the QubitOperator representation of the Hamiltonian.
-        """
-        return sum([
-            QubitOperator("Y" + str(p) + " Y" + str(q), self._g / 2)
-            for p in range(self.n_qubits)
-            for q in range(p + 1, self.n_qubits)
-        ])
-
-    @property
-    def z_part(self):
-        """Z part of the QubitOperator representation of the Hamiltonian.
-        """
-        return sum([QubitOperator("Z" + str(p), (p+1)/2) for p in range(self.n_qubits)])
-
-    @property
-    def xx_and_yy_part(self):
-        """XX and YY parts combined of the QubitOperator representation of the Hamiltonian.
-        """
-        return self.xx_part + self.yy_part
-
-    @property
-    def g(self):
-        """The coupling strength g.
-
-        Returns:
-            float: The coupling strength g.
-        """
-        return self._g
-
-    @g.setter
-    def g(self, value):
-        """Sets the coupling strength g.
-
-        Args:
-            g (float): The coupling strength g.
-        """
-        self._g = value
-
-    @property
-    def n_qubits(self):
-        """The numner of qubits.
-
-        Returns:
-            int: The number of qubits.
-        """
-        return self._n_qubits
+    @DOCIHamiltonian.n_body_tensors.setter
+    def n_body_tensors(self, value):
+        raise TypeError('Raw edits of the n_body_tensors of a RichardsonGaudin model'
+                        'is not allowed. Either adjust the g paramter '
+                        'or cast to another PolynomialTensor class.')
