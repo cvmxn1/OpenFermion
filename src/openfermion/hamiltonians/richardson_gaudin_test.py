@@ -36,4 +36,6 @@ def test_richardson_gaudin_hamiltonian(
     rg_qubit = rg.qubit_operator
     assert rg_qubit == expected
 
-    assert numpy.array_equal(numpy.sort(numpy.unique(get_sparse_operator(rg_qubit).diagonal())), numpy.array(list(range((n_qubits+1)*n_qubits//2+1))))
+    assert numpy.array_equal(
+        numpy.sort(numpy.unique(get_sparse_operator(rg_qubit).diagonal())),
+        numpy.array(list(range((n_qubits+1)*n_qubits//2+1))))
