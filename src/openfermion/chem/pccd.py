@@ -111,6 +111,7 @@ class pCCD:
         self.total_energy = self.escf + en
         print("\t\tIterations Converged")
         print("\t\tTotal Energy {: 5.20f}".format(self.total_energy))
+        return self.total_energy
 
     def evaluate_projected_energy(self):
         o, v = self.o, self.v

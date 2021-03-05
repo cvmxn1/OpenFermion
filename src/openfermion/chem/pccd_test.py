@@ -13,6 +13,7 @@
 
 import os
 import unittest
+import numpy
 
 from openfermion.config import DATA_DIRECTORY
 from openfermion.chem import pCCD
@@ -29,9 +30,5 @@ def test_pccd():
 
     pccd = pCCD(molecule, iter_max=20)
     pccd.setup_integrals(molecule)
-    pccd.compute_energy()
-
-    # print("pCCD T2 amps")
-    # for i in range(pccd.o):
-    #     for a in range(pccd.v):
-    #         print("{}\t{}\t{: 5.20f}".format(i, a, pccd.t2[i * pccd.v + a]))
+    pccd_energy = pccd.compute_energy()
+    assert numpy.isclose(pccd_energy , -1.13727009752064733838)
