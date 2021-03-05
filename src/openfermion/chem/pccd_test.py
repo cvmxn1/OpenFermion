@@ -31,4 +31,4 @@ def test_pccd():
     pccd = pCCD(molecule, iter_max=20)
     pccd.setup_integrals(molecule)
     pccd_energy = pccd.compute_energy()
-    assert numpy.isclose(pccd_energy , -1.13727009752064733838)
+    assert numpy.isclose(pccd_energy, -1.13727009752064733838)
