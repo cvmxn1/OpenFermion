@@ -18,6 +18,7 @@ from openfermion.config import DATA_DIRECTORY
 from openfermion.chem.pubchem import pCCD
 from openfermion.chem.molecular_data import MolecularData
 
+
 def test_pccd():
     geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
     basis = 'sto-3g'

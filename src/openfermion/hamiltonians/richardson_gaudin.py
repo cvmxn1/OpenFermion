@@ -18,6 +18,7 @@ from openfermion.ops.representations import (PolynomialTensor,
                                              get_tensors_from_integrals)
 from openfermion.ops.representations import DOCIHamiltonian
 
+
 class RichardsonGaudin(DOCIHamiltonian):
     r"""Richardson Gaudin model.
 
@@ -47,6 +48,7 @@ class RichardsonGaudin(DOCIHamiltonian):
         The digonal of the Hamiltonian is composed of the values in
         range((n_qubits+1)*n_qubits//2+1).
     """
+
     def __init__(self, g, n_qubits):
         r"""Richardson Gaudin model on a given number of qubits.
 
