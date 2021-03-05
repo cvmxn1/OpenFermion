@@ -15,7 +15,7 @@ import os
 import unittest
 
 from openfermion.config import DATA_DIRECTORY
-from openfermion.chem.pubchem import pCCD
+from openfermion.chem import pCCD
 from openfermion.chem.molecular_data import MolecularData
 
 

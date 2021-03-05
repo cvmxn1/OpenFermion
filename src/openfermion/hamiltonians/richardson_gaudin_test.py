@@ -22,18 +22,16 @@ from openfermion.linalg import get_sparse_operator
 
 
 @pytest.mark.parametrize('g, n_qubits, expected', [
-        (0.3, 2,
-         QubitOperator('1.5 [] + 0.15 [X0 X1] + \
+    (0.3, 2,
+     QubitOperator('1.5 [] + 0.15 [X0 X1] + \
 0.15 [Y0 Y1] + 0.5 [Z0] + 1.0 [Z1]')),
-        (-0.1, 3,
-         QubitOperator(
-             '3.0 [] - 0.05 [X0 X1] - 0.05 [X0 X2] - \
+    (-0.1, 3,
+     QubitOperator(
+         '3.0 [] - 0.05 [X0 X1] - 0.05 [X0 X2] - \
 0.05 [Y0 Y1] - 0.05 [Y0 Y2] + 0.5 [Z0] - 0.05 [X1 X2] - \
-0.05 [Y1 Y2] + 1.0 [Z1] + 1.5 [Z2]'
-         )),
+0.05 [Y1 Y2] + 1.0 [Z1] + 1.5 [Z2]')),
 ])
-def test_richardson_gaudin_hamiltonian(
-        g, n_qubits, expected):
+def test_richardson_gaudin_hamiltonian(g, n_qubits, expected):
     rg = RichardsonGaudin(g, n_qubits)
     rg_qubit = rg.qubit_operator
     assert rg_qubit == expected

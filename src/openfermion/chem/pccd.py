@@ -112,7 +112,6 @@ class pCCD:
         print("\t\tIterations Converged")
         print("\t\tTotal Energy {: 5.20f}".format(self.total_energy))
 
-
     def evaluate_projected_energy(self):
         o, v = self.o, self.v
         energy = 0.
@@ -144,7 +143,7 @@ class pCCD:
         for i in range(o):
             # contract over the virtual index of the vectorized matrix
             VxT_o[i] = -2.0 * np.dot(self.v_iaia[i * v:(i + 1) * v],
-                                     self.t2[i * v:(i + 1) * v ])
+                                     self.t2[i * v:(i + 1) * v])
 
         # print("VxT_oo(i,j) = (jb|jb) t(i,b)")
         for i, j in product(range(o), repeat=2):
