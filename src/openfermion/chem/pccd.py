@@ -9,20 +9,6 @@ from openfermionpsi4 import run_psi4
 import openfermion as of
 
 
-def get_h2o():
-    geometry = [['O', [0.000000000000, 0.000000000000, -0.068516219320]],
-                ['H', [0.000000000000, -0.790689573744, 0.543701060715]],
-                ['H', [0.000000000000, 0.790689573744, 0.543701060715]]]
-    multiplicity = 1
-    charge = 0
-    basis = 'sto-3g'
-    molecule = of.MolecularData(geometry=geometry, multiplicity=multiplicity,
-                                charge=charge, basis=basis)
-    molecule = run_psi4(molecule)
-    print(molecule.hf_energy)
-    return molecule
-
-
 class pCCD:
 
     def __init__(self, molecule, iter_max=100, e_convergence=1.0E-6,
@@ -202,15 +188,3 @@ class pCCD:
                     dum += self.v_ijij[i * o + j] * self.t2[j * v + a]
                 sigma[i * v + a] += dum
         return sigma
-
-
-if __name__ == "__main__":
-    molecule = get_h2o()
-    pccd = pCCD(molecule, iter_max=20)
-    pccd.setup_integrals(molecule)
-    pccd.compute_energy()
-
-    print("pCCD T2 amps")
-    for i in range(pccd.o):
-        for a in range(pccd.v):
-            print("{}\t{}\t{: 5.20f}".format(i, a, pccd.t2[i * pccd.v + a]))
