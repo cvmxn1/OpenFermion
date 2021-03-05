@@ -17,6 +17,7 @@ import pytest
 
 from openfermion.chem.pubchem import geometry_from_pubchem
 from openfermion.testing.testing_utils import module_importable
+from openfermion.chem.molecular_data import MolecularData
 
 using_pubchempy = pytest.mark.skipif(module_importable('pubchempy') is False,
                                      reason='Not detecting `pubchempy`.')
