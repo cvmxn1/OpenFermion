@@ -13,8 +13,6 @@
 
 import os
 import unittest
-import numpy
-import pytest
 
 from openfermion.config import DATA_DIRECTORY
 from openfermion.chem.pubchem import pCCD

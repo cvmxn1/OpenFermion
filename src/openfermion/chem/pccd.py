@@ -5,8 +5,6 @@ TODO: vectorize further with numpy.  current form is to compare with other codes
 """
 from itertools import product
 import numpy as np
-from openfermionpsi4 import run_psi4
-import openfermion as of
 
 
 class pCCD:
