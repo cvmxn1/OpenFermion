@@ -66,10 +66,9 @@ class RichardsonGaudin(DOCIHamiltonian):
 
     @DOCIHamiltonian.constant.setter
     def constant(self, value):
-        raise TypeError(
-            'Raw edits of the constant of a RichardsonGaudin model'
-            'is not allowed. Either adjust the g paramter '
-            'or cast to another PolynomialTensor class.')
+        raise TypeError('Raw edits of the constant of a RichardsonGaudin model'
+                        'is not allowed. Either adjust the g paramter '
+                        'or cast to another PolynomialTensor class.')
 
     @DOCIHamiltonian.n_body_tensors.setter
     def n_body_tensors(self, value):

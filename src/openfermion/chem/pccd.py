@@ -146,12 +146,12 @@ class pCCD:
         for i in range(o):
             # contract over the virtual index of the vectorized matrix
             VxT_o[i] = -2.0 * np.dot(self.v_iaia[i * v:(i + 1) * v],
-                                     self.t2[i * v: (i + 1)* v ])
+                                     self.t2[i * v:(i + 1)* v ])
 
         # print("VxT_oo(i,j) = (jb|jb) t(i,b)")
         for i, j in product(range(o), repeat=2):
-            VxT_oo[i * o + j] = np.dot(self.v_iaia[j*v:(j + 1)*v],
-                                       self.t2[i*v:(i + 1)*v])
+            VxT_oo[i * o + j] = np.dot(self.v_iaia[j * v:(j + 1) * v],
+                                       self.t2[i * v:(i + 1) * v])
 
         # // r2(i,a) += t(j,a) VxT_oo(i,j)
         for i in range(o):
