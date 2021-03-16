@@ -32,6 +32,25 @@ def test_requests_simulation_at_pi_for_pauli():
     assert numpy.isclose(sim_points[1], numpy.pi / 2)
 
 
+def test_estimates_inphase_pauli_nonoise():
+    evals = numpy.array([-1, +1])
+    true_amps = numpy.array([0.2, 0.8])
+    true_expectation_value = numpy.dot(evals, true_amps)
+
+    estimator = PhaseFitEstimator(evals)
+    sim_points = estimator.get_simulation_points()
+    phase_function = numpy.array([
+        numpy.sum([
+            amp * numpy.exp(1j * ev * time)  * numpy.exp(1j * numpy.pi / 8)
+            for ev, amp in zip(evals, true_amps)
+        ])
+        for time in sim_points
+    ])
+    print(phase_function)
+    test_expectation_value = estimator.get_expectation_value(phase_function, force_inphase=True)
+    assert numpy.isclose(true_expectation_value, test_expectation_value)
+
+
 def test_estimates_expectation_value_pauli_nonoise():
     evals = numpy.array([-1, +1])
     true_amps = numpy.array([0.2, 0.8])

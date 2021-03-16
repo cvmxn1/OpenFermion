@@ -154,9 +154,9 @@ class PhaseFitEstimator(_VPEEstimator):
             expectation_value [float] -- the estimated expectation value
         """
         amplitudes = self.get_amplitudes(phase_function, times, force_inphase)
-        expectation_value = numpy.dot(numpy.abs(amplitudes),
+        expectation_value = numpy.dot(numpy.real(amplitudes),
                                       self.evals) / numpy.sum(
-                                          numpy.abs(amplitudes))
+                                          numpy.real(amplitudes))
         return expectation_value
 
 
