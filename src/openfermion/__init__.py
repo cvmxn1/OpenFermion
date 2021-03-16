@@ -159,6 +159,7 @@ from openfermion.measurements import (
     pauli_string_iterator,
     PhaseFitEstimator,
     get_phase_function,
+    make_phase_function,
 )
 
 from openfermion.ops import (

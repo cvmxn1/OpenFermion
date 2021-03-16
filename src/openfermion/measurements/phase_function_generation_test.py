@@ -14,14 +14,14 @@
 import pytest
 import numpy
 
-from .phase_function_generation import phase_function
+from .phase_function_generation import make_phase_function
 
 
 def test_no_sampling_noise():
     amplitudes = numpy.array([0.2, 0.8])
     energies = numpy.array([0, 1])
     times = numpy.array([0, 1])
-    pf = phase_function(times, energies, amplitudes)
+    pf = make_phase_function(times, energies, amplitudes)
     assert len(pf) == 2
     assert numpy.isclose(pf[0], 1)
     assert numpy.isclose(pf[1], 0.2 + 0.8*numpy.exp(1j))
@@ -32,9 +32,11 @@ def test_rng_repeats():
     energies = numpy.array([0, 1])
     times = numpy.array([0, 1])
     rng = numpy.random.RandomState(seed = 42)
-    pf = phase_function(times, energies, amplitudes, repetitions=100, rng=rng)
+    pf = make_phase_function(times, energies, amplitudes, repetitions=100,
+                             rng=rng)
     rng = numpy.random.RandomState(seed = 42)
-    pf2 = phase_function(times, energies, amplitudes, repetitions=100, rng=rng)
+    pf2 = make_phase_function(times, energies, amplitudes, repetitions=100,
+                              rng=rng)
     assert len(pf) == 2
     assert len(pf2) == 2
     assert numpy.isclose(pf, pf2).all()
@@ -45,7 +47,8 @@ def test_sampling_noise():
     energies = numpy.array([0, 1])
     times = numpy.array([0, 1])
     repetitions = 1000000
-    pf = phase_function(times, energies, amplitudes, repetitions=repetitions)
+    pf = make_phase_function(times, energies, amplitudes,
+                             repetitions=repetitions)
     err = 1 / numpy.sqrt(repetitions)
     assert len(pf) == 2
     assert numpy.isclose(numpy.real(pf[0]), 1)

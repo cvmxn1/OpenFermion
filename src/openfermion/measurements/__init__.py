@@ -45,3 +45,7 @@ from .vpe_estimators import (
     PhaseFitEstimator,
     get_phase_function,
 )
+
+from .phase_function_generation import (
+    make_phase_function,
+)

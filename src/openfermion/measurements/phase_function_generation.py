@@ -15,11 +15,11 @@ from typing import Optional
 import numpy
 
 
-def phase_function(times: numpy.ndarray,
-                   energies: numpy.ndarray,
-                   amplitudes: numpy.ndarray,
-                   repetitions: Optional[int] = None,
-                   rng: Optional[numpy.random.RandomState] = None):
+def make_phase_function(times: numpy.ndarray,
+                        energies: numpy.ndarray,
+                        amplitudes: numpy.ndarray,
+                        repetitions: Optional[int] = None,
+                        rng: Optional[numpy.random.RandomState] = None):
     '''Generates a phase function over the given set of data
 
     generates a function of the form g(t) = sum_jA_je^{iE_jt}
