@@ -38,6 +38,69 @@ def fit_known_frequencies(signal: numpy.ndarray, times: numpy.ndarray,
     return amplitudes
 
 
+def fit_known_frequencies_in_phase(signal: numpy.ndarray, times: numpy.ndarray,
+                                   frequencies: numpy.ndarray,
+                                   shift_guess: float = 0) -> numpy.ndarray:
+    """Fits a set of known exponential components to a dataset assuming all
+    have the same phase.
+
+    Decomposes a function g(t) as g(t)=sum_jA_jexp(iw_jt), where the frequencies
+    w_j are already known, and A_j are chosen such that angle(A_j) = phi for all
+    j.
+
+    Arguments:
+        signal {numpy.ndarray} -- the signal g(t) to be fit
+        times {numpy.ndarray} -- t values of the signal
+        frequencies {numpy.ndarray} -- known frequencies w_j
+
+    Returns:
+        amplitudes {numpy.ndarray} -- the found amplitudes A_j
+    """
+    res = scipy.optimize.minimize(
+        lambda x: fit_known_frequencies_real(
+            signal, times, frequencies, x, True)[1],
+        x0=shift_guess)
+    shift = res['x']
+    amplitudes = fit_known_frequencies_real(signal, times, frequencies, shift)
+    return amplitudes * numpy.exp(1j * shift)
+
+
+def fit_known_frequencies_real(signal: numpy.ndarray, times: numpy.ndarray,
+                               frequencies: numpy.ndarray,
+                               shift: float = 0,
+                               return_residual: bool = False) -> numpy.ndarray:
+    """Fits a set of known exponential components with real amplitudes
+
+    Decomposes a function g(t) as g(t)=sum_jA_jexp(iw_jt + beta), where the
+    frequencies w_j are already known, and A_j are chosen real.
+
+    Arguments:
+        signal {numpy.ndarray} -- the signal g(t) to be fit
+        times {numpy.ndarray} -- t values of the signal
+        frequencies {numpy.ndarray} -- known frequencies w_j
+
+    Returns:
+        amplitudes {numpy.ndarray} -- the found amplitudes A_j
+        residual {float, optional} -- the error in the fit
+            returned when return_residual=True.
+    """
+    generation_matrix = numpy.array([
+        [float(numpy.cos(time * freq + shift)) for freq in frequencies]
+        for time in times
+    ] + [
+        [float(numpy.sin(time * freq + shift)) for freq in frequencies]
+        for time in times
+    ])
+    signal = numpy.concatenate([numpy.real(signal), numpy.imag(signal)])
+
+    res = scipy.linalg.lstsq(generation_matrix, signal)
+    amplitudes = res[0]
+    residual = res[1]
+    if return_residual:
+        return amplitudes, residual
+    return amplitudes
+
+
 def prony(signal: numpy.ndarray) -> Tuple[numpy.ndarray, numpy.ndarray]:
     """Estimates amplitudes and phases of a sparse signal using Prony's method.
 

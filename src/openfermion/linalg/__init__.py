@@ -83,6 +83,8 @@ from .sparse_tools import (
 
 from .wave_fitting import (
     fit_known_frequencies,
+    fit_known_frequencies_in_phase,
+    fit_known_frequencies_real,
     prony,
 )
 

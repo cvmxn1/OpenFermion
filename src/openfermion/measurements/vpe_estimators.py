@@ -17,7 +17,10 @@ import numpy
 
 import cirq
 
-from openfermion.linalg import fit_known_frequencies
+from openfermion.linalg import (
+    fit_known_frequencies,
+    fit_known_frequencies_in_phase,
+)
 
 
 class _VPEEstimator(metaclass=abc.ABCMeta):
@@ -36,8 +39,8 @@ class _VPEEstimator(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def get_expectation_value(self,
-                              phase_function: numpy.ndarray) -> numpy.ndarray:
+    def get_expectation_value(self, phase_function: numpy.ndarray,
+                              times: numpy.ndarray = None,) -> numpy.ndarray:
         """Estimates expectation values from an input phase function
 
         Given a phase function g(t), estimates the expectation value <H> of the
@@ -63,7 +66,8 @@ class PhaseFitEstimator(_VPEEstimator):
     outputs the expectation values.
     """
 
-    def __init__(self, evals: numpy.ndarray, ref_eval: float = 0):
+    def __init__(self, evals: numpy.ndarray, ref_eval: float = 0,
+                 separation_tol: float = 1e-6):
         """
         Arguments:
             evals [numpy.ndarray] -- The (known) eigenvalues of the target
@@ -71,10 +75,11 @@ class PhaseFitEstimator(_VPEEstimator):
             ref_eval [numpy.ndarray] -- The eigenvalue of the reference state.
                 When using a control qubit for QPE, this should be set to 0.
         """
-        self.evals = evals
+        self.evals = [ev for n, ev in enumerate(evals) if ((n == 0) or (min([
+            abs(ev - ev2) for ev2 in evals[:n]]) > separation_tol))]
         self.ref_eval = ref_eval
 
-    def get_simulation_points(self) -> numpy.ndarray:
+    def get_simulation_points(self, safe: bool = True) -> numpy.ndarray:
         """Generates time points for estimation
 
         VPE requires estimating the phase function g(t) at multiple points t,
@@ -83,38 +88,62 @@ class PhaseFitEstimator(_VPEEstimator):
 
         In this case, we fit len(self.energies) complex amplitudes to a complex
         valued signal, we need precisely this number of points in the signal.
+
+        However, it appears numerically that approximately twice as many points
+        are needed to prevent aliasing, so we double this number here.
+
         Then, to prevent aliasing, we need to make sure that the time step
         dt < 2*pi / (E_max-E_min). Here, we choose dt = pi / (E_max-E_min).
         (Importantly, for Pauli operators this reproduces the H test.)
 
+        Args:
+            safe [bool, default True] -- numerical testing shows that taking
+                approximately twice as many points is better for the stability
+                of the estimator; this
+
         Returns:
             times: a set of times t that g(t) should be estimated at.
         """
-        numsteps = len(self.evals)
-        step_size = numpy.pi / (max(self.evals) - min(self.evals))
+        if safe:
+            numsteps = len(self.evals) * 4
+            step_size = numpy.pi / (max(self.evals) - min(self.evals)) / 2
+        else:
+            numsteps = len(self.evals)
+            step_size = numpy.pi / (max(self.evals) - min(self.evals))
         maxtime = step_size * (numsteps - 1)
         times = numpy.linspace(0, maxtime, numsteps)
         return times
 
-    def get_amplitudes(self, phase_function: numpy.ndarray) -> numpy.ndarray:
+    def get_amplitudes(self, phase_function: numpy.ndarray,
+                       times: numpy.ndarray = None,
+                       force_inphase: bool = False) -> numpy.ndarray:
         """Fits the amplitudes in the phase function to the input signal data.
 
         Arguments:
             phase_function [numpy.ndarray] -- Phase function input
+            force_inphase [bool] -- Flag for whether the resulting amplitudes
+                should be stuck at having the same amplitudes.
 
         Returns:
             amplitudes [numpy.ndarray] -- Fitted estimates of the amplitudes
                 of the given frequencies (in the same order as in self.energies)
         """
-        times = self.get_simulation_points()
+        if times is None:
+            times = self.get_simulation_points()
         phase_function_shifted = numpy.array(phase_function) *\
             numpy.exp(1j * times * self.ref_eval)
-        amplitudes = fit_known_frequencies(phase_function_shifted, times,
-                                           self.evals)
+        if force_inphase:
+            amplitudes = fit_known_frequencies_in_phase(phase_function_shifted,
+                                                        times, self.evals)
+        else:
+            amplitudes = fit_known_frequencies(phase_function_shifted, times,
+                                               self.evals)
         return amplitudes
 
     def get_expectation_value(self,
-                              phase_function: numpy.ndarray) -> numpy.ndarray:
+                              phase_function: numpy.ndarray,
+                              times: bool = None,
+                              force_inphase: bool = False) -> numpy.ndarray:
         """Estates expectation values via amplitude fitting of known frequencies
 
         Arguments:
@@ -124,7 +153,7 @@ class PhaseFitEstimator(_VPEEstimator):
         Returns:
             expectation_value [float] -- the estimated expectation value
         """
-        amplitudes = self.get_amplitudes(phase_function)
+        amplitudes = self.get_amplitudes(phase_function, times, force_inphase)
         expectation_value = numpy.dot(numpy.abs(amplitudes),
                                       self.evals) / numpy.sum(
                                           numpy.abs(amplitudes))
@@ -149,7 +178,8 @@ standard_rotation_set = [
 def get_phase_function(results: Sequence[cirq.TrialResult],
                        qubits: Sequence[cirq.Qid],
                        target_qid: int,
-                       rotation_set: Optional[Sequence] = None):
+                       rotation_set: Optional[Sequence] = None,
+                       measurement_type: Optional[str] = 'shots'):
     """Generates an estimate of the phase function g(t) from circuit output
 
     The output from a VPE circuit is a set of measurements; from the frequency
@@ -192,6 +222,11 @@ def get_phase_function(results: Sequence[cirq.TrialResult],
                          "in results. Correct length should be: {}".format(
                              len(rotation_set)))
     for result, rdata in zip(results, rotation_set):
+        if measurement_type == 'wave_function':
+            # Assumes no final rotation
+            wf = result.final_state_vector
+            phase_function += 2 * numpy.conj(wf[0]) * wf[hs_index] * rdata[0]
+            continue
         total_shots = result.data['msmt'].count()
         msmt_counts = result.data['msmt'].value_counts()
         if 0 in msmt_counts:
