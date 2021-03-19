@@ -81,7 +81,7 @@ class PhaseFitEstimator(_VPEEstimator):
         """
         self.evals = [
             ev for n, ev in enumerate(evals)
-            if ((n == 0) or 
+            if ((n == 0) or
                 (min([abs(ev - ev2) for ev2 in evals[:n]]) > separation_tol))
         ]
         self.ref_eval = ref_eval
