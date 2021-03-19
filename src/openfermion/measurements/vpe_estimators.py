@@ -196,6 +196,7 @@ standard_rotation_set = [
 ]
 # yapf: enable
 
+
 def get_phase_function(results: Sequence[cirq.TrialResult],
                        qubits: Sequence[cirq.Qid],
                        target_qid: int,
