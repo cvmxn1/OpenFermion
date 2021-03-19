@@ -31,13 +31,13 @@ def test_rng_repeats():
     amplitudes = numpy.array([0.2, 0.8])
     energies = numpy.array([0, 1])
     times = numpy.array([0, 1])
-    rng = numpy.random.RandomState(seed = 42)
+    rng = numpy.random.RandomState(seed=42)
     pf = make_phase_function(times,
                              energies,
                              amplitudes,
                              repetitions=100,
                              rng=rng)
-    rng = numpy.random.RandomState(seed = 42)
+    rng = numpy.random.RandomState(seed=42)
     pf2 = make_phase_function(times,
                               energies,
                               amplitudes,

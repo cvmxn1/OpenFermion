@@ -85,15 +85,13 @@ def fit_known_frequencies_real(signal: numpy.ndarray,
         residual {float, optional} -- the error in the fit
             returned when return_residual=True.
     """
-    generation_matrix = numpy.array([
-        [float(numpy.cos(time * freq + shift))
+    generation_matrix = numpy.array(
+        [[float(numpy.cos(time * freq + shift))
          for freq in frequencies]
-        for time in times
-    ] + [
-        [float(numpy.sin(time * freq + shift))
+        for time in times] +
+        [[float(numpy.sin(time * freq + shift))
          for freq in frequencies]
-        for time in times
-    ])
+        for time in times])
     signal = numpy.concatenate([numpy.real(signal), numpy.imag(signal)])
 
     res = scipy.linalg.lstsq(generation_matrix, signal)
@@ -120,15 +118,13 @@ def get_condition_number_generation_matrix(times: numpy.ndarray,
         frequencies {numpy.ndarray} -- values of w_j in the above equation
             (known frequencies to fit)
     '''
-    generation_matrix = numpy.array([
-        [float(numpy.cos(time * freq))
+    generation_matrix = numpy.array(
+        [[float(numpy.cos(time * freq + shift))
          for freq in frequencies]
-        for time in times
-    ] + [
-        [float(numpy.sin(time * freq))
+        for time in times] +
+        [[float(numpy.sin(time * freq + shift))
          for freq in frequencies]
-        for time in times
-    ])
+        for time in times])
     return numpy.linalg.cond(generation_matrix.T @ generation_matrix)
 
 
