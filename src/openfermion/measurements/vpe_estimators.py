@@ -175,7 +175,6 @@ class PhaseFitEstimator(_VPEEstimator):
         return get_condition_number_generation_matrix(times, self.evals)
 
 
-
 # disabling yapf here as its proposed formatting decreases readability
 # yapf: disable
 standard_rotation_set = [
