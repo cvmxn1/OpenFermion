@@ -87,11 +87,11 @@ def fit_known_frequencies_real(signal: numpy.ndarray,
     """
     generation_matrix = numpy.array(
         [[float(numpy.cos(time * freq + shift))
-         for freq in frequencies]
-        for time in times] +
+          for freq in frequencies]
+         for time in times] +
         [[float(numpy.sin(time * freq + shift))
-         for freq in frequencies]
-        for time in times])
+          for freq in frequencies]
+         for time in times])
     signal = numpy.concatenate([numpy.real(signal), numpy.imag(signal)])
 
     res = scipy.linalg.lstsq(generation_matrix, signal)
@@ -120,11 +120,11 @@ def get_condition_number_generation_matrix(times: numpy.ndarray,
     '''
     generation_matrix = numpy.array(
         [[float(numpy.cos(time * freq + shift))
-         for freq in frequencies]
-        for time in times] +
+          for freq in frequencies]
+         for time in times] +
         [[float(numpy.sin(time * freq + shift))
-         for freq in frequencies]
-        for time in times])
+          for freq in frequencies]
+         for time in times])
     return numpy.linalg.cond(generation_matrix.T @ generation_matrix)
 
 
