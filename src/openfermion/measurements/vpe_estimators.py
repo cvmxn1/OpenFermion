@@ -169,7 +169,7 @@ class PhaseFitEstimator(_VPEEstimator):
 
     def get_condition_number(self, times: Optional[numpy.ndarray] = None):
         """Gets the condition number for the chosen problem and set of times
-        
+
         Arguments:
             times [numpy.ndarray or None] -- the times to estimate g(t) at
                 when solving this problem. When None, calls
@@ -184,7 +184,7 @@ class PhaseFitEstimator(_VPEEstimator):
 
 # disabling yapf here as its proposed formatting decreases readability
 # yapf: disable
-standard_rotation_set = [
+standard_vpe_rotation_set = [
     [0.25, cirq.ry(numpy.pi / 2), cirq.ry(-numpy.pi / 2)],
     [-0.25, cirq.ry(numpy.pi / 2), cirq.ry(numpy.pi / 2)],
     [-0.25j, cirq.ry(numpy.pi / 2), cirq.rx(-numpy.pi / 2)],
