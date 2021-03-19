@@ -194,6 +194,10 @@ standard_vpe_rotation_set = [
     [0.25j, cirq.rx(numpy.pi / 2), cirq.ry(-numpy.pi / 2)],
     [-0.25j, cirq.rx(numpy.pi / 2), cirq.ry(numpy.pi / 2)],
 ]
+
+simulator_rotation_set_simple = [
+    [1, cirq.ry(numpy.pi / 2), None],
+]
 # yapf: enable
 
 

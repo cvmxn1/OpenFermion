@@ -16,6 +16,7 @@ from .wave_fitting import (
     prony,
     fit_known_frequencies,
     fit_known_frequencies_in_phase,
+    get_condition_number_generation_matrix,
 )
 
 
@@ -96,3 +97,10 @@ def test_fitting_inphase():
         for index2 in range(index + 1, 3):
             assert numpy.isclose(numpy.angle(amplitudes_guess[index]),
                                  numpy.angle(amplitudes_guess[index2]))
+
+
+def test_condition_number_Z():
+    frequencies = numpy.array([-1, 1])
+    times = numpy.array([0, numpy.pi/2])
+    cond_number = get_condition_number_generation_matrix(times, frequencies)
+    assert numpy.isclose(cond_number, 1)

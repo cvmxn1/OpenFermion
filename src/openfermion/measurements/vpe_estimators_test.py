@@ -19,6 +19,7 @@ import cirq
 from .vpe_estimators import (
     PhaseFitEstimator,
     get_phase_function,
+    simulator_rotation_set_simple,
 )
 
 rng = numpy.random.RandomState(seed=42)
@@ -99,6 +100,25 @@ def test_phase_function_gen_raises_error():
         get_phase_function(results, qubits, target_qid)
 
 
+def test_phase_function_wf():
+
+    class FakeResult:
+
+        def __init__(self, data):
+            self.final_state_vector = data
+
+    datasets = [[numpy.sqrt(0.5), 0, numpy.sqrt(0.5), 0], ]
+
+    results = [FakeResult(dataset) for dataset in datasets]
+    qubits = [cirq.GridQubit(0, 0), cirq.GridQubit(0, 1)]
+    target_qid = 0
+    phase_function_est = get_phase_function(
+        results, qubits, target_qid,
+        rotation_set=simulator_rotation_set_simple,
+        measurement_type='wave_function')
+    assert numpy.isclose(phase_function_est, 1)
+
+
 def test_phase_function_gen():
 
     class FakeResult:
@@ -119,3 +139,9 @@ def test_phase_function_gen():
     target_qid = 0
     phase_function_est = get_phase_function(results, qubits, target_qid)
     assert phase_function_est == 1
+
+
+def test_condition_number_gen():
+    estimator = PhaseFitEstimator(evals = numpy.array([-1, 1]))
+    cond_num = estimator.get_condition_number([0, numpy.pi/2])
+    assert numpy.isclose(cond_num, 1)

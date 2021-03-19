@@ -119,10 +119,10 @@ def get_condition_number_generation_matrix(times: numpy.ndarray,
             (known frequencies to fit)
     '''
     generation_matrix = numpy.array(
-        [[float(numpy.cos(time * freq + shift))
+        [[float(numpy.cos(time * freq))
           for freq in frequencies]
          for time in times] +
-        [[float(numpy.sin(time * freq + shift))
+        [[float(numpy.sin(time * freq))
           for freq in frequencies]
          for time in times])
     return numpy.linalg.cond(generation_matrix.T @ generation_matrix)
