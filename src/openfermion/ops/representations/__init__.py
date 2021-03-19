@@ -23,5 +23,4 @@ from .quadratic_hamiltonian import (
     QuadraticHamiltonianError,
     antisymmetric_canonical_form,
 )
-
 from .doci_hamiltonian import DOCIHamiltonian

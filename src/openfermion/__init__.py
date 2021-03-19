@@ -139,6 +139,7 @@ from openfermion.linalg import (
     get_condition_number_generation_matrix,
     prony,
     wedge,
+    valdemoro_reconstruction,
 )
 
 from openfermion.measurements import (
@@ -263,6 +264,9 @@ from openfermion.circuits import (
     error_bound,
     error_operator,
     trotter_steps_required,
+    vpe_single_circuit,
+    vpe_circuits_single_timestep,
+    standard_vpe_rotation_set,
 )
 
 from openfermion.testing import (

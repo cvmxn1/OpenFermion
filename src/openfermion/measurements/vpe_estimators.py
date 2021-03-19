@@ -189,7 +189,6 @@ standard_rotation_set = [
 ]
 # yapf: enable
 
-
 def get_phase_function(results: Sequence[cirq.TrialResult],
                        qubits: Sequence[cirq.Qid],
                        target_qid: int,
@@ -230,7 +229,7 @@ def get_phase_function(results: Sequence[cirq.TrialResult],
     """
     hs_index = 2**(len(qubits) - target_qid - 1)
     if rotation_set is None:
-        rotation_set = standard_rotation_set
+        rotation_set = standard_vpe_rotation_set
     phase_function = 0
     if len(results) != len(rotation_set):
         raise ValueError("I have an incorrect number of TrialResults "
