@@ -20,6 +20,7 @@ import cirq
 from openfermion.linalg import (
     fit_known_frequencies,
     fit_known_frequencies_in_phase,
+    get_condition_number_generation_matrix,
 )
 
 
@@ -142,7 +143,7 @@ class PhaseFitEstimator(_VPEEstimator):
 
     def get_expectation_value(self,
                               phase_function: numpy.ndarray,
-                              times: bool = None,
+                              times: Optional[numpy.ndarray] = None,
                               force_inphase: bool = False) -> numpy.ndarray:
         """Estates expectation values via amplitude fitting of known frequencies
 
@@ -158,6 +159,21 @@ class PhaseFitEstimator(_VPEEstimator):
                                       self.evals) / numpy.sum(
                                           numpy.real(amplitudes))
         return expectation_value
+
+    def get_condition_number(self, times: Optional[numpy.ndarray] = None):
+        """Gets the condition number for the chosen problem and set of times
+        
+        Arguments:
+            times [numpy.ndarray or None] -- the times to estimate g(t) at
+                when solving this problem. When None, calls
+                get_simulation_points to obtain appropriate values.
+
+        Returns:
+            cond_number [float] -- the condition number of the matrix B*B
+                where B is the matrix that solves BA=g for our given problem.
+        """
+        return get_condition_number_generation_matrix(times, self.evals)
+
 
 
 # disabling yapf here as its proposed formatting decreases readability

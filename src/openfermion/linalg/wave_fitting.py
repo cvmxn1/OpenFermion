@@ -101,6 +101,32 @@ def fit_known_frequencies_real(signal: numpy.ndarray, times: numpy.ndarray,
     return amplitudes
 
 
+def get_condition_number_generation_matrix(times: numpy.ndarray,
+                                           frequencies: numpy.ndarray):
+    '''Calculates the condition number for a generation matrix
+
+    Calculates the condition number for the matrix B*B, where B is the matrix
+    that solves BA = g, g is the vector containing the phase function at
+    timesteps t_n - g_n = g(t_n) and A is the vector of ampltudes that describe
+    the function g(t)=sum_jA_jexp(iw_jt + beta). Note that this solution is
+    independent of beta (as B*B is also independent).
+
+    Arguments:
+        times {numpy.ndarray} -- values of t_n in the above equation (points
+            where the signal function will be estimated)
+        frequencies {numpy.ndarray} -- values of w_j in the above equation
+            (known frequencies to fit)
+    '''
+    generation_matrix = numpy.array([
+        [float(numpy.cos(time * freq)) for freq in frequencies]
+        for time in times
+    ] + [
+        [float(numpy.sin(time * freq)) for freq in frequencies]
+        for time in times
+    ])
+    return numpy.linalg.cond(generation_matrix.T @ generation_matrix)
+
+
 def prony(signal: numpy.ndarray) -> Tuple[numpy.ndarray, numpy.ndarray]:
     """Estimates amplitudes and phases of a sparse signal using Prony's method.
 
