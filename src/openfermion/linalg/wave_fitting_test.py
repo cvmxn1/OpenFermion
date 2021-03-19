@@ -93,6 +93,6 @@ def test_fitting_inphase():
     for index in range(3):
         assert numpy.isclose(numpy.abs(amplitudes_guess[index]),
                              amplitudes[index])
-        for index2 in range(index+1, 3):
+        for index2 in range(index + 1, 3):
             assert numpy.isclose(numpy.angle(amplitudes_guess[index]),
                                  numpy.angle(amplitudes_guess[index2]))

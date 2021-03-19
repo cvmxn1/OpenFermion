@@ -38,7 +38,8 @@ def fit_known_frequencies(signal: numpy.ndarray, times: numpy.ndarray,
     return amplitudes
 
 
-def fit_known_frequencies_in_phase(signal: numpy.ndarray, times: numpy.ndarray,
+def fit_known_frequencies_in_phase(signal: numpy.ndarray,
+                                   times: numpy.ndarray,
                                    frequencies: numpy.ndarray,
                                    shift_guess: float = 0) -> numpy.ndarray:
     """Fits a set of known exponential components to a dataset assuming all
@@ -56,16 +57,16 @@ def fit_known_frequencies_in_phase(signal: numpy.ndarray, times: numpy.ndarray,
     Returns:
         amplitudes {numpy.ndarray} -- the found amplitudes A_j
     """
-    res = scipy.optimize.minimize(
-        lambda x: fit_known_frequencies_real(
-            signal, times, frequencies, x, True)[1],
-        x0=shift_guess)
+    res = scipy.optimize.minimize(lambda x: fit_known_frequencies_real(
+        signal, times, frequencies, x, True)[1],
+                                  x0=shift_guess)
     shift = res['x']
     amplitudes = fit_known_frequencies_real(signal, times, frequencies, shift)
     return amplitudes * numpy.exp(1j * shift)
 
 
-def fit_known_frequencies_real(signal: numpy.ndarray, times: numpy.ndarray,
+def fit_known_frequencies_real(signal: numpy.ndarray,
+                               times: numpy.ndarray,
                                frequencies: numpy.ndarray,
                                shift: float = 0,
                                return_residual: bool = False) -> numpy.ndarray:
@@ -85,10 +86,12 @@ def fit_known_frequencies_real(signal: numpy.ndarray, times: numpy.ndarray,
             returned when return_residual=True.
     """
     generation_matrix = numpy.array([
-        [float(numpy.cos(time * freq + shift)) for freq in frequencies]
+        [float(numpy.cos(time * freq + shift))
+         for freq in frequencies]
         for time in times
     ] + [
-        [float(numpy.sin(time * freq + shift)) for freq in frequencies]
+        [float(numpy.sin(time * freq + shift))
+         for freq in frequencies]
         for time in times
     ])
     signal = numpy.concatenate([numpy.real(signal), numpy.imag(signal)])
@@ -118,10 +121,12 @@ def get_condition_number_generation_matrix(times: numpy.ndarray,
             (known frequencies to fit)
     '''
     generation_matrix = numpy.array([
-        [float(numpy.cos(time * freq)) for freq in frequencies]
+        [float(numpy.cos(time * freq))
+         for freq in frequencies]
         for time in times
     ] + [
-        [float(numpy.sin(time * freq)) for freq in frequencies]
+        [float(numpy.sin(time * freq))
+         for freq in frequencies]
         for time in times
     ])
     return numpy.linalg.cond(generation_matrix.T @ generation_matrix)

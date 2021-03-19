@@ -47,5 +47,4 @@ from .vpe_estimators import (
 )
 
 from .phase_function_generation import (
-    make_phase_function,
-)
+    make_phase_function,)

@@ -35,8 +35,8 @@ def make_phase_function(times: numpy.ndarray,
             in the simulated sampling noise. If None, does not add
             sampling noise (effectively infinite samples)
     '''
-    phase_function = amplitudes @ numpy.exp(1j * energies[:, numpy.newaxis]
-                                            @ times[numpy.newaxis, :])
+    phase_function = amplitudes @ numpy.exp(
+        1j * energies[:, numpy.newaxis] @ times[numpy.newaxis, :])
     if repetitions is None:
         return phase_function
 

@@ -41,13 +41,14 @@ def test_estimates_inphase_pauli_nonoise():
     sim_points = estimator.get_simulation_points()
     phase_function = numpy.array([
         numpy.sum([
-            amp * numpy.exp(1j * ev * time)  * numpy.exp(1j * numpy.pi / 8)
+            amp * numpy.exp(1j * ev * time) * numpy.exp(1j * numpy.pi / 8)
             for ev, amp in zip(evals, true_amps)
         ])
         for time in sim_points
     ])
     print(phase_function)
-    test_expectation_value = estimator.get_expectation_value(phase_function, force_inphase=True)
+    test_expectation_value = estimator.get_expectation_value(phase_function,
+                                                             force_inphase=True)
     assert numpy.isclose(true_expectation_value, test_expectation_value)
 
 

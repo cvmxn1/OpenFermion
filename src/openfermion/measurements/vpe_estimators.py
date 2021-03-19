@@ -40,8 +40,9 @@ class _VPEEstimator(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def get_expectation_value(self, phase_function: numpy.ndarray,
-                              times: numpy.ndarray = None,) -> numpy.ndarray:
+    def get_expectation_value(self,
+                              phase_function: numpy.ndarray,
+                              times: numpy.ndarray = None) -> numpy.ndarray:
         """Estimates expectation values from an input phase function
 
         Given a phase function g(t), estimates the expectation value <H> of the
@@ -67,7 +68,9 @@ class PhaseFitEstimator(_VPEEstimator):
     outputs the expectation values.
     """
 
-    def __init__(self, evals: numpy.ndarray, ref_eval: float = 0,
+    def __init__(self,
+                 evals: numpy.ndarray,
+                 ref_eval: float = 0,
                  separation_tol: float = 1e-6):
         """
         Arguments:
@@ -76,8 +79,11 @@ class PhaseFitEstimator(_VPEEstimator):
             ref_eval [numpy.ndarray] -- The eigenvalue of the reference state.
                 When using a control qubit for QPE, this should be set to 0.
         """
-        self.evals = [ev for n, ev in enumerate(evals) if ((n == 0) or (min([
-            abs(ev - ev2) for ev2 in evals[:n]]) > separation_tol))]
+        self.evals = [
+            ev for n, ev in enumerate(evals)
+            if ((n == 0) or (
+                min([abs(ev - ev2) for ev2 in evals[:n]]) > separation_tol))
+        ]
         self.ref_eval = ref_eval
 
     def get_simulation_points(self, safe: bool = True) -> numpy.ndarray:
@@ -115,7 +121,8 @@ class PhaseFitEstimator(_VPEEstimator):
         times = numpy.linspace(0, maxtime, numsteps)
         return times
 
-    def get_amplitudes(self, phase_function: numpy.ndarray,
+    def get_amplitudes(self,
+                       phase_function: numpy.ndarray,
                        times: numpy.ndarray = None,
                        force_inphase: bool = False) -> numpy.ndarray:
         """Fits the amplitudes in the phase function to the input signal data.
