@@ -134,6 +134,9 @@ from openfermion.linalg import (
     get_number_preserving_sparse_operator,
     generate_parity_permutations,
     fit_known_frequencies,
+    fit_known_frequencies_in_phase,
+    fit_known_frequencies_real,
+    get_condition_number_generation_matrix,
     prony,
     wedge,
     valdemoro_reconstruction,
@@ -160,6 +163,7 @@ from openfermion.measurements import (
     pauli_string_iterator,
     PhaseFitEstimator,
     get_phase_function,
+    make_phase_function,
 )
 
 from openfermion.ops import (

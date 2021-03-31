@@ -12,7 +12,12 @@
 """ Tests for wave_fitting.py"""
 
 import numpy
-from .wave_fitting import prony, fit_known_frequencies
+from .wave_fitting import (
+    prony,
+    fit_known_frequencies,
+    fit_known_frequencies_in_phase,
+    get_condition_number_generation_matrix,
+)
 
 
 def test_prony_zeros():
@@ -64,3 +69,38 @@ def test_fitting_signal():
     assert len(amplitudes_guess == 3)
     for index in range(3):
         assert numpy.isclose(amplitudes_guess[index], amplitudes[index])
+
+
+def test_fitting_inphase():
+    frequencies = numpy.array([0.4, 0.5, 0.8])
+    amplitudes = numpy.array([0.2, 0.4, 0.4])
+    times = numpy.linspace(0, 10, 21)
+    phase = numpy.exp(1j * numpy.pi / 6)
+    signal = numpy.array([
+        numpy.sum([
+            amp * numpy.exp(1j * time * freq) * phase
+            for freq, amp in zip(frequencies, amplitudes)
+        ])
+        for time in times
+    ])
+    amplitudes_guess = fit_known_frequencies(signal, times, frequencies)
+    assert len(amplitudes_guess == 3)
+    for index in range(3):
+        assert numpy.isclose(amplitudes_guess[index], amplitudes[index] * phase)
+
+    amplitudes_guess = fit_known_frequencies_in_phase(signal, times,
+                                                      frequencies)
+    assert len(amplitudes_guess == 3)
+    for index in range(3):
+        assert numpy.isclose(numpy.abs(amplitudes_guess[index]),
+                             amplitudes[index])
+        for index2 in range(index + 1, 3):
+            assert numpy.isclose(numpy.angle(amplitudes_guess[index]),
+                                 numpy.angle(amplitudes_guess[index2]))
+
+
+def test_condition_number_Z():
+    frequencies = numpy.array([-1, 1])
+    times = numpy.array([0, numpy.pi / 2])
+    cond_number = get_condition_number_generation_matrix(times, frequencies)
+    assert numpy.isclose(cond_number, 1)
