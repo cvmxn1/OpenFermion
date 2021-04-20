@@ -45,7 +45,7 @@ class RichardsonGaudin(DOCIHamiltonian):
         \end{align}
 
     Note;
-        The digonal of the Hamiltonian is composed of the values in
+        The diagonal of the Hamiltonian is composed of the values in
         range((n_qubits+1)*n_qubits//2+1).
     """
 
@@ -69,12 +69,12 @@ class RichardsonGaudin(DOCIHamiltonian):
     @DOCIHamiltonian.constant.setter
     def constant(self, value):
         raise TypeError('Raw edits of the constant of a RichardsonGaudin model'
-                        'is not allowed. Either adjust the g paramter '
+                        'is not allowed. Either adjust the g parameter '
                         'or cast to another PolynomialTensor class.')
 
     @DOCIHamiltonian.n_body_tensors.setter
     def n_body_tensors(self, value):
         raise TypeError(
             'Raw edits of the n_body_tensors of a RichardsonGaudin model'
-            'is not allowed. Either adjust the g paramter '
+            'is not allowed. Either adjust the g parameter '
             'or cast to another PolynomialTensor class.')
