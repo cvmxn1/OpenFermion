@@ -363,9 +363,7 @@ class DOCIHamiltonian(PolynomialTensor):
         given set of hc, hr1 and hr2.
         
         This is technically not well-defined, as hr2 is
-        not generated in a one-to-one fashion. In particular, here we assume
-        hr2 corresponds entirely to a pqqp term, while this could be equally well
-        added to the pqpq term. This implies that calling
+        not generated in a one-to-one fashion. This implies that calling
 
         get_doci_from_integrals(*get_projected_integrals_from_doci(hc, hr1, hr2))
 
@@ -374,6 +372,10 @@ class DOCIHamiltonian(PolynomialTensor):
 
         get_projected_integrals_from_doci(*get_doci_from_integrals(
         one_body_integrals, two_body_integrals))
+
+        but this method attemps to create integrals that conform to the
+        same symmetries as a physical electronic structure Hamiltonian would,
+        with inevitable loss of information due to the ambiguity above.
 
         Args:
            hc [numpy array]: The single-particle DOCI terms in matrix form
