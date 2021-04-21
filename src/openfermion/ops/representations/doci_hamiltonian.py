@@ -396,8 +396,8 @@ class DOCIHamiltonian(PolynomialTensor):
            projected_twobody_integrals [numpy array]: The corresponding two body
                integrals for the electronic structure Hamiltonian
         '''
-        one_body_integrals, two_body_integrals = get_projected_integrals_from_doci(
-            self.hc, self.hr1, self.hr2)
+        one_body_integrals, two_body_integrals = \
+            get_projected_integrals_from_doci(self.hc, self.hr1, self.hr2)
         return one_body_integrals, two_body_integrals
 
 
