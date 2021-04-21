@@ -453,9 +453,10 @@ def get_projected_integrals_from_doci(hc, hr1, hr2):
             integrals for the electronic structure Hamiltonian
     '''
     n_qubits = hr1.shape[0]
-    projected_onebody_integrals = numpy.zeros((n_qubits, n_qubits))
+    projected_onebody_integrals = numpy.zeros(
+        (n_qubits, n_qubits), dtype=hc.dtype)
     projected_twobody_integrals = numpy.zeros(
-        (n_qubits, n_qubits, n_qubits, n_qubits))
+        (n_qubits, n_qubits, n_qubits, n_qubits), dtype=hc.dtype)
     for p in range(n_qubits):
         projected_onebody_integrals[p, p] = hc[p] / 2
         projected_twobody_integrals[p, p, p, p] = hr2[p, p]
