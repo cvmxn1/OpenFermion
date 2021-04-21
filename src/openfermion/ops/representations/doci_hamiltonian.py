@@ -386,7 +386,7 @@ class DOCIHamiltonian(PolynomialTensor):
 
         Args:
            hc [numpy array]: The single-particle DOCI terms in matrix form
-           hr1 [numpy array]: The off-diagonal DOCI Hamiltonian terms in matrix 
+           hr1 [numpy array]: The off-diagonal DOCI Hamiltonian terms in matrix
                form
            hr2 [numpy array]: The diagonal DOCI Hamiltonian terms in matrix form
 
