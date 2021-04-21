@@ -41,8 +41,8 @@ class IntegralTransformsTest(unittest.TestCase):
     def test_integrals_self_inverse(self):
         hc, hr1, hr2 = get_doci_from_integrals(self.molecule.one_body_integrals,
                                                self.molecule.two_body_integrals)
-        proj_one_body, proj_two_body = get_projected_integrals_from_doci(
-            hc, hr1, hr2)
+        doci = DOCIHamiltonian(0, hc, hr1, hr2)
+        proj_one_body, proj_two_body = doci.get_projected_integrals()
         hc_test, hr1_test, hr2_test = get_doci_from_integrals(
             proj_one_body, proj_two_body)
         self.assertTrue(numpy.allclose(hc, hc_test))
