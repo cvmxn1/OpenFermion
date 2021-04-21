@@ -462,7 +462,7 @@ def get_projected_integrals_from_doci(hc, hr1, hr2):
         for q in range(n_qubits):
             if p <= q:
                 continue
-           
+
             projected_twobody_integrals[p, q, q,
                                         p] = hr2[p, q] / 2 + hr1[p, q] / 2
             projected_twobody_integrals[q, p, p,
@@ -472,7 +472,7 @@ def get_projected_integrals_from_doci(hc, hr1, hr2):
             projected_twobody_integrals[p, q, p, q] += hr1[p, q]
             projected_twobody_integrals[q, q, p, p] += hr1[p, q]
             projected_twobody_integrals[q, p, q, p] += hr1[p, q]
-      
+
     return projected_onebody_integrals, projected_twobody_integrals
 
 
