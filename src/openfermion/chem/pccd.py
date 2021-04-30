@@ -5,7 +5,7 @@ TODO: vectorize further with numpy.  current form is to compare with other codes
 """
 from itertools import product
 import numpy as np
-
+import warnings
 
 class pCCD:
 
@@ -80,7 +80,7 @@ class pCCD:
         self.setup_integrals()
         iter = 0
 
-        while iter < self.iter_max:
+        while True:
 
             self.evaluate_residual()
 
@@ -102,10 +102,17 @@ class pCCD:
             print("\t\t\t{}\t{: 5.10f}\t{: 5.10f}\t{: 5.10f}".format(
                 iter, en, dE, nrm))
 
+            if np.isnan(en) or np.isnan(dE) or np.isnan(nrm):
+                raise Exception("Unable to converge pCCD calculation. Encountered nan value.")
+
             if np.abs(dE) < self.e_convergence and nrm < self.r_convergence:
                 break
 
             iter += 1
+
+            if iter >= self.iter_max:
+                warnings.warn("Exceeded iter_max before converging up to convergence criteria.")
+                break
 
         self.correlation_energy = en
         self.total_energy = self.escf + en
