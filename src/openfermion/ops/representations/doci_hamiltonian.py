@@ -386,7 +386,7 @@ class DOCIHamiltonian(PolynomialTensor):
 
         Args:
            hc [numpy array]: The single-particle DOCI terms in matrix form
-           hr1 [numpy array]: The off-diagonal DOCI Hamiltonian terms in matrix 
+           hr1 [numpy array]: The off-diagonal DOCI Hamiltonian terms in matrix
                form
            hr2 [numpy array]: The diagonal DOCI Hamiltonian terms in matrix form
 
@@ -396,8 +396,8 @@ class DOCIHamiltonian(PolynomialTensor):
            projected_twobody_integrals [numpy array]: The corresponding two body
                integrals for the electronic structure Hamiltonian
         '''
-        one_body_integrals, two_body_integrals = get_projected_integrals_from_doci(
-            self.hc, self.hr1, self.hr2)
+        one_body_integrals, two_body_integrals = \
+            get_projected_integrals_from_doci(self.hc, self.hr1, self.hr2)
         return one_body_integrals, two_body_integrals
 
 
@@ -453,16 +453,17 @@ def get_projected_integrals_from_doci(hc, hr1, hr2):
             integrals for the electronic structure Hamiltonian
     '''
     n_qubits = hr1.shape[0]
-    projected_onebody_integrals = numpy.zeros((n_qubits, n_qubits))
+    projected_onebody_integrals = numpy.zeros((n_qubits, n_qubits),
+                                              dtype=hc.dtype)
     projected_twobody_integrals = numpy.zeros(
-        (n_qubits, n_qubits, n_qubits, n_qubits))
+        (n_qubits, n_qubits, n_qubits, n_qubits), dtype=hc.dtype)
     for p in range(n_qubits):
         projected_onebody_integrals[p, p] = hc[p] / 2
         projected_twobody_integrals[p, p, p, p] = hr2[p, p]
         for q in range(n_qubits):
             if p <= q:
                 continue
-           
+
             projected_twobody_integrals[p, q, q,
                                         p] = hr2[p, q] / 2 + hr1[p, q] / 2
             projected_twobody_integrals[q, p, p,
@@ -472,7 +473,7 @@ def get_projected_integrals_from_doci(hc, hr1, hr2):
             projected_twobody_integrals[p, q, p, q] += hr1[p, q]
             projected_twobody_integrals[q, q, p, p] += hr1[p, q]
             projected_twobody_integrals[q, p, q, p] += hr1[p, q]
-      
+
     return projected_onebody_integrals, projected_twobody_integrals
 
 
