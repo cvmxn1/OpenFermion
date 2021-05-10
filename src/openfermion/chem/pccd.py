@@ -4,8 +4,8 @@ C-like implementaiton of of pCCD equations.
 TODO: vectorize further with numpy.  current form is to compare with other codes
 """
 from itertools import product
-import numpy as np
 import warnings
+import numpy as np
 
 class pCCD:
 
@@ -103,7 +103,9 @@ class pCCD:
                 iter, en, dE, nrm))
 
             if np.isnan(en) or np.isnan(dE) or np.isnan(nrm):
-                raise Exception("Unable to converge pCCD calculation. Encountered nan value.")
+                raise Exception(
+                    "Unable to converge pCCD calculation. Encountered nan value."
+                )
 
             if np.abs(dE) < self.e_convergence and nrm < self.r_convergence:
                 break
@@ -111,7 +113,9 @@ class pCCD:
             iter += 1
 
             if iter >= self.iter_max:
-                warnings.warn("Exceeded iter_max before converging up to convergence criteria.")
+                warnings.warn(
+                    "Exceeded iter_max before converging up to convergence criteria."
+                )
                 break
 
         self.correlation_energy = en
