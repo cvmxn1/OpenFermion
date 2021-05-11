@@ -36,18 +36,13 @@ def test_pccd():
 
     #warning trigger
     pccd = pCCD(molecule, iter_max=1)
-    pccd.setup_integrals(molecule)    
-    with self.assertWarns(warnings.Warning):
+    pccd.setup_integrals(molecule)
+    with unittest.TestCase.assertWarns(warnings.Warning):
         pccd_energy = pccd.compute_energy()
 
     #NaN TypeError raising
     molecule.one_body_integrals[0, 0] = numpy.nan
     pccd = pCCD(molecule, iter_max=5)
     pccd.setup_integrals(molecule)
-    with self.assertRaises(TypeError):
+    with unittestTestCase.assertRaises(TypeError):
         pccd_energy = pccd.compute_energy()
-    
-    
-
-    
-    
