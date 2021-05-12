@@ -27,7 +27,10 @@ class PCCDTests(unittest.TestCase):
         basis = 'sto-3g'
         multiplicity = 1
         filename = os.path.join(DATA_DIRECTORY, 'H2_sto-3g_singlet_0.7414')
-        molecule = MolecularData(geometry, basis, multiplicity, filename=filename)
+        molecule = MolecularData(geometry,
+                                 basis,
+                                 multiplicity,
+                                 filename=filename)
         molecule.load()
 
         pccd = pCCD(molecule, iter_max=20)
