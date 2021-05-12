@@ -20,6 +20,7 @@ from openfermion.config import DATA_DIRECTORY
 from openfermion.chem import pCCD
 from openfermion.chem.molecular_data import MolecularData
 
+
 class PCCDTests(unittest.TestCase):
 
     def test_pccd(self):
