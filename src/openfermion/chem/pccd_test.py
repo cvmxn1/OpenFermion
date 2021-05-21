@@ -13,6 +13,7 @@
 
 import os
 import unittest
+import warnings
 import numpy
 
 from openfermion.config import DATA_DIRECTORY
@@ -20,15 +21,33 @@ from openfermion.chem import pCCD
 from openfermion.chem.molecular_data import MolecularData
 
 
-def test_pccd():
-    geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
-    basis = 'sto-3g'
-    multiplicity = 1
-    filename = os.path.join(DATA_DIRECTORY, 'H2_sto-3g_singlet_0.7414')
-    molecule = MolecularData(geometry, basis, multiplicity, filename=filename)
-    molecule.load()
+class PCCDTests(unittest.TestCase):
 
-    pccd = pCCD(molecule, iter_max=20)
-    pccd.setup_integrals(molecule)
-    pccd_energy = pccd.compute_energy()
-    assert numpy.isclose(pccd_energy, -1.13727009752064733838)
+    def test_pccd(self):
+        geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
+        basis = 'sto-3g'
+        multiplicity = 1
+        filename = os.path.join(DATA_DIRECTORY, 'H2_sto-3g_singlet_0.7414')
+        molecule = MolecularData(geometry,
+                                 basis,
+                                 multiplicity,
+                                 filename=filename)
+        molecule.load()
+
+        pccd = pCCD(molecule, iter_max=20)
+        pccd.setup_integrals(molecule)
+        pccd_energy = pccd.compute_energy()
+        assert numpy.isclose(pccd_energy, -1.13727009752064733838)
+
+        #warning trigger
+        pccd = pCCD(molecule, iter_max=1)
+        pccd.setup_integrals(molecule)
+        with self.assertWarns(Warning):
+            pccd.compute_energy()
+
+        #NaN TypeError raising
+        molecule.one_body_integrals[0, 0] = numpy.nan
+        pccd = pCCD(molecule, iter_max=5)
+        pccd.setup_integrals(molecule)
+        with self.assertRaises(TypeError):
+            pccd.compute_energy()
