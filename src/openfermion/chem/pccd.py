@@ -268,7 +268,6 @@ class CCD:
         n, o, v = self.n, self.o, self.v
         self.e_abij = 1 / (-self.sorb_e[v, n, n, n] - self.sorb_e[n, v, n, n] +
                            self.sorb_e[n, n, o, n] + self.sorb_e[n, n, n, o])
-
         self.t_amp = np.zeros((self.nvirt, self.nvirt, self.nocc, self.nocc))
 
     def solve_for_amplitudes(self):
@@ -350,10 +349,17 @@ class CCD:
         self.t_amp = t_amp
         self.ccd_energy = E_CCD
 
-    def compute_energy(self, t_amplitudes):
+    def compute_energy(self, t_amplitudes=None):
+
+        if t_amplitudes is None:
+            self.solve_for_amplitudes()
+            self.t_amp = self._amplitude_zero_nonpairs(self.t_amp)
+            t_amplitudes = self.t_amp
+
         o, v = self.o, self.v
         gmo = self.astei
-        return (1 / 4) * np.einsum('ijab, abij ->', gmo[o, o, v, v], t_amplitudes, optimize=True)
+        ret = (1 / 4) * np.einsum('ijab, abij ->', gmo[o, o, v, v], t_amplitudes, optimize=True) + self.scf_energy
+        return ret
 
     def compute_energy_ncr(self):
         """Amplitude equations determined from pdaggerq"""
@@ -474,15 +480,15 @@ class CCD:
                                         -t_amp_new, optimize=True)
             t_amp = t_amp_new
             dE = E_CCD - E_old
-            print('pCCD Iteration %3d: Energy = %4.12f dE = %1.5E' % (
+            print('CCD Iteration %3d: Energy = %4.12f dE = %1.5E' % (
             cc_iter, E_CCD, dE))
 
             if abs(dE) < self.e_convergence:
-                print("\npCCD Iterations have converged!")
+                print("\nCCD Iterations have converged!")
                 break
 
-        print('\npCCD Correlation Energy:    %15.12f' % (E_CCD))
-        print('pCCD Total Energy:         %15.12f' % (E_CCD + self.scf_energy))
+        print('\nCCD Correlation Energy:    %15.12f' % (E_CCD))
+        print('CCD Total Energy:         %15.12f' % (E_CCD + self.scf_energy))
         self.t_amp = t_amp
 
 
