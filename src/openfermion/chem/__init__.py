@@ -24,4 +24,4 @@ from .molecular_data import (angstroms_to_bohr, bohr_to_angstroms,
 from .pubchem import geometry_from_pubchem
 
 from .reduced_hamiltonian import make_reduced_hamiltonian
-from .pccd import pCCD
+from .pccd import pCCD, CCD
