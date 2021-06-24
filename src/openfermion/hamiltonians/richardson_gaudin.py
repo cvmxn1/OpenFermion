@@ -60,7 +60,7 @@ class RichardsonGaudin(DOCIHamiltonian):
         hr1 = numpy.zeros((n_qubits, n_qubits))
         hr2 = numpy.zeros((n_qubits, n_qubits))
         for p in range(n_qubits):
-            hc[p] = p + 1
+            hc[p] = -2*(p + 1)
             for q in range(n_qubits):
                 if p != q:
                     hr1[p, q] = g
