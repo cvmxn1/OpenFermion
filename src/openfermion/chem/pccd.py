@@ -232,12 +232,13 @@ class CCD:
         if molecule is not None:
             # if molecule is defined
             if self.molecule.multiplicity != 1:
-                raise ValueError("We are only implementing for closed shell RHF")
+                raise ValueError("We are only implementing for \
+                closed shell RHF")
 
             self.n_electrons = molecule.n_electrons
 
             oei, tei = molecule.get_integrals()
-            soei, stei = spinorb_from_spatial(oei, tei)
+            _, stei = spinorb_from_spatial(oei, tei)
             self.astei = np.einsum('ijkl', stei) - np.einsum('ijlk', stei)
 
             self.orb_e = molecule.orbital_energies
@@ -274,11 +275,12 @@ class CCD:
         """
         Compute the CCD amplitudes
 
-        Iteration code taken from https://github.com/psi4/psi4numpy/blob/master/Tutorials/08_CEPA0_and_CCD/8b_CEPA0_and_CCD.ipynb
+        Iteration code taken from https://github.com/psi4/psi4numpy/blob/ \
+        master/Tutorials/08_CEPA0_and_CCD/8b_CEPA0_and_CCD.ipynb
         """
         t_amp = self.t_amp
         gmo = self.astei
-        n, o, v = self.n, self.o, self.v
+        _, o, v = self.n, self.o, self.v
         e_abij = self.e_abij
 
         # Initialize energy
@@ -358,7 +360,8 @@ class CCD:
 
         o, v = self.o, self.v
         gmo = self.astei
-        ret = (1 / 4) * np.einsum('ijab, abij ->', gmo[o, o, v, v], t_amplitudes, optimize=True) + self.scf_energy
+        ret = (1 / 4) * np.einsum('ijab, abij ->', gmo[o, o, v, v], \
+                                  t_amplitudes, optimize=True) + self.scf_energy
         return ret
 
     def compute_energy_ncr(self):
@@ -380,7 +383,8 @@ class CCD:
             for i, j in product(range(self.nocc), repeat=2):
                 a_spatial, b_spatial = a // 2, b // 2
                 i_spatial, j_spatial = i // 2, j // 2
-                if a % 2 == 0 and b % 2 == 1 and i % 2 == 0 and j % 2 == 1 and a_spatial == b_spatial and i_spatial == j_spatial:
+                if a % 2 == 0 and b % 2 == 1 and i % 2 == 0 and j % 2 == 1 and \
+                   a_spatial == b_spatial and i_spatial == j_spatial:
                     pccd_t2_amps[a, b, i, j] = tamps[a, b, i, j]
                     pccd_t2_amps[b, a, j, i] = tamps[a, b, i, j]
 
@@ -404,7 +408,8 @@ class CCD:
             for i, j in product(range(self.nocc), repeat=2):
                 a_spatial, b_spatial = a // 2, b // 2
                 i_spatial, j_spatial = i // 2, j // 2
-                if a % 2 == 0 and b % 2 == 1 and i % 2 == 0 and j % 2 == 1 and a_spatial == b_spatial and i_spatial == j_spatial:
+                if a % 2 == 0 and b % 2 == 1 and i % 2 == 0 and j % 2 == 1 and \
+                   a_spatial == b_spatial and i_spatial == j_spatial:
                     pccd_t2_amps[a_spatial, i_spatial] = tamps[a, b, i, j]
                     amp_count += 1
         assert np.isclose((self.nvirt//2) * (self.nocc//2), amp_count)
@@ -417,7 +422,7 @@ class CCD:
             t_amp = starting_amps
 
         gmo = self.astei
-        n, o, v = self.n, self.o, self.v
+        _, o, v = self.n, self.o, self.v
         e_abij = self.e_abij
 
         # Initialize energy
@@ -471,7 +476,9 @@ class CCD:
             ccd4 = (ccd4a + ccd4b)
 
             # Update Amplitude
-            residual = self._amplitude_zero_nonpairs(mp2 + cepa1 + cepa2 + cepa3 + ccd1 + ccd2 + ccd3 + ccd4)
+            residual = self._amplitude_zero_nonpairs(mp2 + cepa1 + cepa2 + \
+                                                     cepa3 + ccd1 + ccd2 + \
+                                                     ccd3 + ccd4)
             t_amp_new = -e_abij * residual
             t_amp_new = self._amplitude_zero_nonpairs(t_amp_new)
 
@@ -500,8 +507,10 @@ class CCD:
 #     ccd.solve_for_amplitudes()
 
 #     ccd.t_amp = ccd._amplitude_zero_nonpairs(ccd.t_amp)
-#     print("Correlation energy from just pCCD amps ", ccd.compute_energy(ccd.t_amp))
-#     print("Correlation energy from just pCCD amps ", ccd.compute_energy(ccd.t_amp) + ccd.molecule.hf_energy)
+#     print("Correlation energy from just pCCD amps ", \
+#           ccd.compute_energy(ccd.t_amp))
+#     print("Correlation energy from just pCCD amps ", \
+#           ccd.compute_energy(ccd.t_amp) + ccd.molecule.hf_energy)
 
 #     pccd = CCD(molecule=molecule, iter_max=20)
 #     pccd.pccd_solve()
