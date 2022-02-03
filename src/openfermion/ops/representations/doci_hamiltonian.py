@@ -125,7 +125,7 @@ class DOCIHamiltonian(PolynomialTensor):
             [QubitOperator] -- Z term on the chosen qubit.
         """
         return QubitOperator("Z" + str(p),
-                             self.hc[p] / 2 + sum(self.hr2[:, p]) / 2)
+                             -self.hc[p] / 2 - sum(self.hr2[:, p]) / 2)
 
     def zz_term(self, p, q):
         """Returns the ZZ term on a single pair of qubits as a QubitOperator
@@ -402,7 +402,8 @@ class DOCIHamiltonian(PolynomialTensor):
 
 
 def get_tensors_from_doci(hc, hr1, hr2):
-    '''Makes the one and two-body tensors from the DOCI Hamiltonian matrices
+    '''Makes the one and two-body tensors of a fermionic "parent Hamoltonian" \
+    from the DOCI Hamiltonian matrices
 
     Args:
         hc [numpy array]: The single-particle DOCI terms in matrix form
@@ -420,6 +421,10 @@ def get_tensors_from_doci(hc, hr1, hr2):
         get_projected_integrals_from_doci(hc, hr1, hr2)
     one_body_coefficients, two_body_coefficients = get_tensors_from_integrals(
         one_body_integrals, two_body_integrals)
+
+    two_body_coefficients = two_body_coefficients - numpy.einsum(
+        'ijlk', two_body_coefficients)
+
     return one_body_coefficients, two_body_coefficients
 
 
