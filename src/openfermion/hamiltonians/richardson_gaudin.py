@@ -11,8 +11,8 @@
 #   limitations under the License.
 """This module constructs Hamiltonians of the Richardson Gaudin type.
 """
+from itertools import chain, product
 import numpy
-
 from openfermion.ops import QubitOperator
 from openfermion.ops.representations import (PolynomialTensor,
                                              get_tensors_from_integrals)
@@ -60,11 +60,11 @@ class RichardsonGaudin(DOCIHamiltonian):
         hr1 = numpy.zeros((n_qubits, n_qubits))
         hr2 = numpy.zeros((n_qubits, n_qubits))
         for p in range(n_qubits):
-            hc[p] = -2 * (p + 1)
+            hc[p] = 2 * (p + 1)
             for q in range(n_qubits):
                 if p != q:
                     hr1[p, q] = g
-        super().__init__(2 * numpy.sum(numpy.arange(n_qubits) + 1), hc, hr1, hr2)
+        super().__init__(0, hc, hr1, hr2)
 
     @DOCIHamiltonian.constant.setter
     def constant(self, value):
@@ -78,3 +78,32 @@ class RichardsonGaudin(DOCIHamiltonian):
             'Raw edits of the n_body_tensors of a RichardsonGaudin model'
             'is not allowed. Either adjust the g parameter '
             'or cast to another PolynomialTensor class.')
+
+    def get_antisymmetrized_tensors(self):
+        r"""Antisymmetrized Tensors
+        Directly returns antisymmetrized tensors, which, when used
+        to construct an FermionOperator via an InteractionOperator
+        produce a FermionOperator that acts like this RichardsonGaudin
+        Hamiltonian on the paired (seniority zero) subspace.
+        Compared to the FermionOperator that can be obtained via the
+        n_body_tensors property from the DOCIHamiltonian class
+        the FermionOperator from the tensors returned by this function
+        do not contain same spin coupling terms. These terms
+        act trivially on the paired subspace and this the two Hamiltonian
+        agree on any senioirty zero state.
+        Returns:
+            tuple: Tuple of one and two body tensors.
+        """
+        g = self.hr1[0, 1]
+        spatial_orbs = self.hc.shape[0]
+        h1 = numpy.diag(numpy.arange(spatial_orbs) + 1)
+        h1 = numpy.kron(h1, numpy.eye(2))
+        h2 = numpy.zeros((2 * spatial_orbs,) * 4)
+        for p, q in product(range(spatial_orbs), repeat=2):
+            if p != q:
+                h2[2 * p, 2 * p + 1, 2 * q + 1, 2 * q] = g / 2
+                h2[2 * p + 1, 2 * p, 2 * q, 2 * q + 1] = g / 2
+
+        h2 = h2 - numpy.einsum('ijlk', h2)
+
+        return h1, h2
