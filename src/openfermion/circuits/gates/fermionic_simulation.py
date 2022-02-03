@@ -184,18 +184,18 @@ def sum_of_interaction_operator_gate_generators(
 
 @cirq.value_equality(approximate=True)
 class ParityPreservingFermionicGate(cirq.Gate, metaclass=abc.ABCMeta):
-    r"""The Jordan-Wigner transform of :math:`\exp(-i H)` for a fermionic
-    Hamiltonian :math:`H`.
+    r"""The Jordan-Wigner transform of $\exp(-i H)$ for a fermionic
+    Hamiltonian $H$.
 
-    Each subclass corresponds to a set of generators :math:`\{G_i\}`
-    corresponding to the family of Hamiltonians :math:`\sum_i w_i G_i +
-    \text{h.c.}`, where the weights :math:`w_i \in \mathbb C` are specified by
+    Each subclass corresponds to a set of generators $\{G_i\}$
+    corresponding to the family of Hamiltonians $\sum_i w_i G_i +
+    \text{h.c.}$, where the weights $w_i \in \mathbb C$ are specified by
     the instance.
 
-    The Jordan-Wigner mapping maps the fermionic modes :math:`(0, \ldots, n -
-    1)` to qubits :math:`(0, \ldots, n - 1)`, respectively.
+    The Jordan-Wigner mapping maps the fermionic modes $(0, \ldots, n -
+    1)$ to qubits $(0, \ldots, n - 1)$, respectively.
 
-    Each generator :math:`G_i` must be a linear combination of fermionic
+    Each generator $G_i$ must be a linear combination of fermionic
     monomials consisting of an even number of creation/annihilation operators.
     This is so that the Jordan-Wigner transform acts only on the gate's qubits,
     even when the fermionic modes are offset as part of a larger Jordan-Wigner
@@ -231,8 +231,8 @@ class ParityPreservingFermionicGate(cirq.Gate, metaclass=abc.ABCMeta):
     @staticmethod
     @abc.abstractmethod
     def fermion_generator_components() -> Tuple['openfermion.FermionOperator']:
-        r"""The FermionOperators :math:`(G_i)_i` such that the gate's fermionic
-        generator is :math:`\sum_i w_i G_i + \text{h.c.}` where :math:`(w_i)_i`
+        r"""The FermionOperators $(G_i)_i$ such that the gate's fermionic
+        generator is $\sum_i w_i G_i + \text{h.c.}$ where $(w_i)_i$
         are the gate's weights."""
 
     @abc.abstractmethod
@@ -278,11 +278,16 @@ class ParityPreservingFermionicGate(cirq.Gate, metaclass=abc.ABCMeta):
         """The symbol to use in circuit diagrams."""
         return cls.__name__
 
-    def _resolve_parameters_(self, resolver):
-        resolved_weights = cirq.resolve_parameters(self.weights, resolver)
-        resolved_exponent = cirq.resolve_parameters(self._exponent, resolver)
+    def _resolve_parameters_(self, resolver, recursive: bool = True):
+        resolved_weights = cirq.resolve_parameters(self.weights,
+                                                   resolver,
+                                                   recursive=recursive)
+        resolved_exponent = cirq.resolve_parameters(self._exponent,
+                                                    resolver,
+                                                    recursive=recursive)
         resolved_global_shift = cirq.resolve_parameters(self._global_shift,
-                                                        resolver)
+                                                        resolver,
+                                                        recursive=recursive)
         return type(self)(resolved_weights,
                           exponent=resolved_exponent,
                           global_shift=resolved_global_shift)
@@ -355,8 +360,8 @@ class ParityPreservingFermionicGate(cirq.Gate, metaclass=abc.ABCMeta):
 
 
 class InteractionOperatorFermionicGate(ParityPreservingFermionicGate):
-    r"""The Jordan-Wigner transform of :math:`\exp(-i H)` for a fermionic
-    Hamiltonian :math:`H`, where :math:`H` is an interaction operator.
+    r"""The Jordan-Wigner transform of $\exp(-i H)$ for a fermionic
+    Hamiltonian $H$, where $H$ is an interaction operator.
 
     See openfermion.ParityPreservingFermionicGate and
     openfermion.InteractionOperator for more details.
@@ -393,30 +398,33 @@ class InteractionOperatorFermionicGate(ParityPreservingFermionicGate):
 
 class QuadraticFermionicSimulationGate(InteractionOperatorFermionicGate,
                                        cirq.InterchangeableQubitsGate,
-                                       cirq.TwoQubitGate, cirq.EigenGate):
+                                       cirq.EigenGate):
     r"""``(w0 |10⟩⟨01| + h.c.) + w1 |11⟩⟨11|`` interaction.
 
-    With weights :math:`(w_0, w_1)` and exponent :math:`t`, this gate's matrix
+    With weights $(w_0, w_1)$ and exponent $t$, this gate's matrix
     is defined as
 
-    .. math::
+    $$
         e^{-i t H},
+    $$
 
     where
 
-    .. math::
+    $$
         H = \left(w_0 \left| 10 \right\rangle\left\langle 01 \right| +
                 \text{h.c.}\right) -
             w_1 \left| 11 \right\rangle \left\langle 11 \right|.
+    $$
 
     This corresponds to the Jordan-Wigner transform of
 
-    .. math::
+    $$
         H = (w_0 a^{\dagger}_i a_{i+1} + \text{h.c.}) +
              w_1 a_{i}^{\dagger} a_{i+1}^{\dagger} a_{i} a_{i+1},
+    $$
 
-    where :math:`a_i` and  :math:`a_{i+1}` are the annihilation operators for
-    the fermionic modes :math:`i` and :math:`(i+1)`, respectively mapped to the
+    where $a_i$ and  $a_{i+1}$ are the annihilation operators for
+    the fermionic modes $i$ and $(i+1)$, respectively mapped to the
     first and second qubits on which this gate acts.
 
     Args:
@@ -425,6 +433,9 @@ class QuadraticFermionicSimulationGate(InteractionOperatorFermionicGate,
 
     @classmethod
     def num_weights(cls):
+        return 2
+
+    def _num_qubits_(self) -> int:
         return 2
 
     def _decompose_(self, qubits):
@@ -524,37 +535,40 @@ class QuadraticFermionicSimulationGate(InteractionOperatorFermionicGate,
 
 
 class CubicFermionicSimulationGate(InteractionOperatorFermionicGate,
-                                   cirq.ThreeQubitGate, cirq.EigenGate):
+                                   cirq.EigenGate):
     r"""``w0|110⟩⟨101| + w1|110⟩⟨011| + w2|101⟩⟨011|`` + h.c. interaction.
 
-    With weights :math:`(w_0, w_1, w_2)` and exponent :math:`t`, this gate's
+    With weights $(w_0, w_1, w_2)$ and exponent $t$, this gate's
     matrix is defined as
 
-    .. math::
+    $$
         e^{-i t H},
+    $$
 
     where
 
-    .. math::
+    $$
         H = \left(w_0 \left| 110 \right\rangle\left\langle 101 \right| +
                 \text{h.c.}\right) +
             \left(w_1 \left| 110 \right\rangle\left\langle 011 \right| +
                 \text{h.c.}\right) +
             \left(w_2 \left| 101 \right\rangle\left\langle 011 \right| +
                 \text{h.c.}\right)
+    $$
 
     This corresponds to the Jordan-Wigner transform of
 
-    .. math::
+    $$
         H = -\left(w_0 a^{\dagger}_i a^{\dagger}_{i+1} a_{i} a_{i+2} +
                    \text{h.c.}\right) -
             \left(w_1 a^{\dagger}_i a^{\dagger}_{i+1} a_{i+1} a_{i+2} +
                   \text{h.c.}\right) -
             \left(w_2 a^{\dagger}_i a^{\dagger}_{i+2} a_{i+1} a_{i+2} +
                   \text{h.c.}\right),
+    $$
 
-    where :math:`a_i`, :math:`a_{i+1}`, :math:`a_{i+2}` are the annihilation
-    operators for the fermionic modes :math:`i`, :math:`(i+1)` :math:`(i+2)`,
+    where $a_i$, $a_{i+1}$, $a_{i+2}$ are the annihilation
+    operators for the fermionic modes $i$, $(i+1)$ $(i+2)$,
     respectively mapped to the three qubits on which this gate acts.
 
     Args:
@@ -563,6 +577,9 @@ class CubicFermionicSimulationGate(InteractionOperatorFermionicGate,
 
     @classmethod
     def num_weights(cls):
+        return 3
+
+    def _num_qubits_(self) -> int:
         return 3
 
     @classmethod
@@ -676,34 +693,37 @@ class QuarticFermionicSimulationGate(InteractionOperatorFermionicGate,
                                      cirq.EigenGate):
     r"""Rotates Hamming-weight 2 states into their bitwise complements.
 
-    With weights :math:`(w_0, w_1, w_2)` and exponent :math:`t`, this gate's
+    With weights $(w_0, w_1, w_2)$ and exponent $t$, this gate's
     matrix is defined as
 
-    .. math::
+    $$
         e^{-i t H},
+    $$
 
     where
 
-    .. math::
+    $$
         H = \left(w_0 \left| 1001 \right\rangle\left\langle 0110 \right| +
                 \text{h.c.}\right) +
             \left(w_1 \left| 1010 \right\rangle\left\langle 0101 \right| +
                 \text{h.c.}\right) +
             \left(w_2 \left| 1100 \right\rangle\left\langle 0011 \right| +
                 \text{h.c.}\right)
+    $$
 
     This corresponds to the Jordan-Wigner transform of
 
-    .. math::
+    $$
         H = -\left(w_0 a^{\dagger}_i a^{\dagger}_{i+3} a_{i+1} a_{i+2} +
                    \text{h.c.}\right) -
             \left(w_1 a^{\dagger}_i a^{\dagger}_{i+2} a_{i+1} a_{i+3} +
                   \text{h.c.}\right) -
             \left(w_2 a^{\dagger}_i a^{\dagger}_{i+1} a_{i+2} a_{i+3} +
                   \text{h.c.}\right),
+    $$
 
-    where :math:`a_i`, ..., :math:`a_{i+3}` are the annihilation operators for
-    the fermionic modes :math:`i`, ..., :math:`(i+3)`, respectively
+    where $a_i$, ..., $a_{i+3}$ are the annihilation operators for
+    the fermionic modes $i$, ..., $(i+3)$, respectively
     mapped to the four qubits on which this gate acts.
 
 

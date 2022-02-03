@@ -19,6 +19,9 @@ Hamiltonians. For more information, see our
 .. image:: https://badge.fury.io/py/openfermion.svg
     :target: https://badge.fury.io/py/openfermion
 
+.. image:: https://img.shields.io/pypi/dm/openfermion
+   :target: https://img.shields.io/pypi/dm/openfermion
+
 
 Run the interactive Jupyter Notebooks in Colab_ or MyBinder_:
 
@@ -52,9 +55,6 @@ You might also want to explore the alpha release of the
 `OpenFermion Cloud Library <https://github.com/quantumlib/OpenFermion/tree/master/cloud_library>`__
 where users can share and download precomputed molecular benchmark files.
 
-Check out other `projects and papers using OpenFermion <https://quantumai.google/openfermion/projects>`__ for inspiration,
-and let us know if you've been using OpenFermion!
-
 
 Developer install
 -----------------
@@ -84,7 +84,14 @@ Specifically, plugins are used to simulate and compile quantum circuits and to p
 classical electronic structure calculations.
 Follow the links below to learn more!
 
-Circuit compilation and simulation plugins
+High performance simulators
+------------------------------------------
+* `OpenFermion-FQE <https://github.com/quantumlib/OpenFermion-FQE>`__ is
+  a high performance emulator of fermionic quantum evolutions specified
+  by a sequence of fermion operators, which can exploit fermionic
+  symmetries such as spin and particle number.
+
+Circuit compilation plugins
 ------------------------------------------
 * `Forest-OpenFermion <https://github.com/rigetticomputing/forestopenfermion>`__ to support integration with `Forest <https://www.rigetti.com/forest>`__.
 
@@ -168,23 +175,25 @@ Authors
 `Qiming Sun <https://github.com/sunqm>`__ (Caltech),
 `Wei Sun <https://github.com/Spaceenter>`__ (Google),
 `Daochen Wang <https://github.com/daochenw>`__ (River Lane Research),
-`Chris Winkler <https://github.com/quid256>`__ (University of Chicago) and
-`Fang Zhang <https://github.com/fangzh-umich>`__ (University of Michigan).
+`Chris Winkler <https://github.com/quid256>`__ (University of Chicago),
+`Fang Zhang <https://github.com/fangzh-umich>`__ (University of Michigan) and
+`Emiel Koridon <https://github.com/Emieeel>`__ (Leiden University).
+
+
 
 How to cite
 ===========
 When using OpenFermion for research projects, please cite:
 
-    Jarrod R. McClean, Kevin J. Sung, Ian D. Kivlichan, Xavier Bonet-Monroig, Yudong Cao,
-    Chengyu Dai, E. Schuyler Fried, Craig Gidney, Brendan Gimby,
-    Pranav Gokhale, Thomas Häner, Tarini Hardikar, Vojtĕch Havlíček,
-    Oscar Higgott, Cupjin Huang, Josh Izaac, Zhang Jiang, William Kirby, Xinle Liu,
-    Sam McArdle, Matthew Neeley, Thomas O'Brien, Bryan O'Gorman, Isil Ozfidan,
-    Maxwell D. Radin, Jhonathan Romero, Nicholas Rubin, Nicolas P. D. Sawaya,
-    Kanav Setia, Sukin Sim, Damian S. Steiger, Mark Steudtner, Qiming Sun,
-    Wei Sun, Daochen Wang, Fang Zhang and Ryan Babbush.
+    Jarrod R McClean, Nicholas C Rubin, Kevin J Sung, Ian D Kivlichan, Xavier Bonet-Monroig,
+    Yudong Cao, Chengyu Dai, E Schuyler Fried, Craig Gidney, Brendan Gimby, Pranav Gokhale,
+    Thomas Häner, Tarini Hardikar, Vojtěch Havlíček, Oscar Higgott, Cupjin Huang, Josh Izaac,
+    Zhang Jiang, Xinle Liu, Sam McArdle, Matthew Neeley, Thomas O'Brien, Bryan O'Gorman,
+    Isil Ozfidan, Maxwell D Radin, Jhonathan Romero, Nicolas P D Sawaya, Bruno Senjean,
+    Kanav Setia, Sukin Sim, Damian S Steiger, Mark Steudtner, Qiming Sun, Wei Sun, Daochen Wang,
+    Fang Zhang, and Ryan Babbush
     *OpenFermion: The Electronic Structure Package for Quantum Computers*.
-    `arXiv:1710.07629 <https://arxiv.org/abs/1710.07629>`__. 2017.
+    `Quantum Science and Technology 5.3 (2020): 034014 <https://iopscience.iop.org/article/10.1088/2058-9565/ab8ebc/meta>`__.
 
 We are happy to include future contributors as authors on later releases.
 
