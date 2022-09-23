@@ -181,7 +181,7 @@ Authors
 `Fang Zhang <https://github.com/fangzh-umich>`__ (University of Michigan),
 `Emiel Koridon <https://github.com/Emieeel>`__ (Leiden University),
 `Fotios Gkritsis <https://github.com/cvmxn1>`__ (Covestro) and
-`Christian Gogolin <https://github.com/cvjjm.com>`__ (Covestro).
+`Christian Gogolin <https://github.com/cvjjm>`__ (Covestro).
 
 
 
