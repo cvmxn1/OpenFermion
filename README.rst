@@ -178,8 +178,10 @@ Authors
 `Wei Sun <https://github.com/Spaceenter>`__ (Google),
 `Daochen Wang <https://github.com/daochenw>`__ (River Lane Research),
 `Chris Winkler <https://github.com/quid256>`__ (University of Chicago),
-`Fang Zhang <https://github.com/fangzh-umich>`__ (University of Michigan) and
-`Emiel Koridon <https://github.com/Emieeel>`__ (Leiden University).
+`Fang Zhang <https://github.com/fangzh-umich>`__ (University of Michigan),
+`Emiel Koridon <https://github.com/Emieeel>`__ (Leiden University),
+`Fotios Gkritsis <https://github.com/cvmxn1>`__ (Covestro) and
+`Christian Gogolin <https://github.com/cvjjm.com>`__ (Covestro).
 
 
 
